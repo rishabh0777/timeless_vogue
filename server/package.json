@@ -1,0 +1,13 @@
+{
+  "name": "Timeless Vogue",
+  "version": "1.0.0",
+  "description": "This is a backend for E-commerce site for men",
+  "license": "ISC",
+  "author": "Rishabh Srivastava",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx nodemon index.js"
+  }
+}
