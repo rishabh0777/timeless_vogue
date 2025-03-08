@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+/* Apply fonts */
+body {
+  font-family: 'Mulish', sans-serif;
+  font-weight: 300;
+  color: #333; /* Adjust color for luxury feel */
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.authBg {
+   background-image: linear-gradient(to right bottom, #524158, #2f394c, #1c2f35, #172120, #121312);
+}
+
