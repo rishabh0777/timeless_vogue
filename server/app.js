@@ -4,8 +4,8 @@ import cors from 'cors';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
-import Product from './models/product.models.js';
-import connectDB from './db/db.js';
+import Product from './src/models/product.models.js';
+import connectDB from './src/db/db.js';
 
 // Connect to database
 await connectDB();
