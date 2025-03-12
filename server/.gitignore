@@ -1,6 +1,66 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-error.log
+package-lock.json
+.yarn-integrity
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+/log
+/logs
+*.gz
+
+# Environment files
 .env
-node_modules
-npm-debug.log
+.env.local
+.env.development
+.env.production
+.env.test
+.env.*.local
+
+# Database
+*.sqlite
+*.sqlite3
 data
-seeders
-migrations
+/db/*
+/data/
+dump.rdb
+dump.sql
+*.db
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Editor and IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build and output
+/build
+/dist
+/out
+/temp
+/tmp
+.cache
+
+# Docker
+docker-compose.override.yml
+*.container
+*.tar
+
+# Misc
+coverage/
+.nyc_output/
+*.bak
+*.orig
+*.tmp
+
