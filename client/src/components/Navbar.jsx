@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 
 const Navbar = () => {
   const [user, setUser] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(true);
   const navigate = useNavigate();
   const optionRef = useRef();
 
@@ -27,18 +26,18 @@ const redirectToLogin = ()=>{
 
   return (
     <>
-    <nav className="w-full h-[10vh] px-12 flex items-center justify-between fixed top-0 bg-white/10 backdrop-blur-md z-[1000]">
+    <nav className="w-full h-[10vh] px-12 flex items-center justify-between fixed top-0 bg-white z-[1000] shadow-lg">
         <h2 className='text-3xl'>TimelessVogue</h2>
         <ul className='text-[1vw] flex gap-[5vw] border-white/20 font-bold'>
-          <li className='cursor-pointer'>Home</li>
-          <li className='cursor-pointer'>Shop</li>
-          <li className='cursor-pointer'>About</li>
-          {
-            isAdmin&&(
-              <li className='cursor-pointer'>Admin</li>
-              )
-          }
+          <li onClick={()=>navigate('/')} className='cursor-pointer'>Home</li>
+          <li onClick={()=>navigate('/shop')} className='cursor-pointer'>Wardrobe</li>
+          <li onClick={()=>navigate('/about')} className='cursor-pointer'>About</li>
         </ul>
+        {/* Search bar */}
+        <div className='flex gap-[3vw] relative '>
+          <input type="text" placeholder='Search' className='bg-transparent border-2 rounded-lg w-[20vw] px-2 py-1 outline-none'/>
+          <i className="ri-search-line cursor-pointer absolute right-[1vw] top-1/2 transform -translate-y-1/2 -translate-x-[1vw]"></i>
+        </div>
         <div className='flex gap-[3vw]'>
           <i className="ri-shopping-bag-line cursor-pointer"></i>
           <div onClick={toggleOptions} className='flex gap-[0.7vw] cursor-pointer'>

@@ -1,8 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom'
 
 const Footer = () => {
+  const navigate = useNavigate()
   return (
-    <div className='w-full h-[25vh] bg-white/10 backdrop-blur-md flex flex-col shadow-[0_-5px_10px_rgba(0,0,0,0.2)] shadow-zinc-500'>
+    <div className='w-full h-[25vh] bg-white/10 backdrop-blur-md flex flex-col border-t-2 border-zinc-500'>
       
       {/* Top Section */}
       <div className='w-full h-[80%] flex justify-between items-center px-10'>
@@ -16,9 +18,9 @@ const Footer = () => {
         <div className='w-[40%] flex flex-col text-center'>
           <h2 className='text-[1.5vw] font-semibold'>Quick Links</h2>
           <div className='flex justify-center gap-5 text-[1vw]'>
-            <a href="#" className='hover:underline'>Home</a>
-            <a href="#" className='hover:underline'>Shop</a>
-            <a href="#" className='hover:underline'>About</a>
+            <a onClick={()=>navigate('/')} className='hover:underline'>Home</a>
+            <a onClick={()=>navigate('/shop')} className='hover:underline'>Shop</a>
+            <a onClick={()=>navigate('/about')} className='hover:underline'>About</a>
           </div>
         </div>
 

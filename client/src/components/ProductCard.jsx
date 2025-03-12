@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import gsap from 'gsap';
 
-const Card = ({ className, btnTxt, image, title, description, price }) => {
+const ProductCard = ({ className, item, price, btnTxt }) => {
   const categoryInformationRef = useRef(null);
 
   const hoverEffect = () => {
@@ -27,7 +27,7 @@ const Card = ({ className, btnTxt, image, title, description, price }) => {
       onMouseLeave={leaveEffect}
     >
       {/* Background Image */}
-      <img className="w-full absolute" src={image} alt={title} />
+      <img className="w-full absolute" src={item.image} alt={item.title} />
 
      
       {/* Information Section */}
@@ -36,10 +36,10 @@ const Card = ({ className, btnTxt, image, title, description, price }) => {
         className="w-full h-0 bg-white/10 backdrop-blur-md absolute z-[12] bottom-0 flex flex-col justify-center items-center text-center px-4 text-white overflow-hidden transition-all"
       >
         {/* Category Title */}
-        <h2 className="text-lg font-semibold uppercase">{title}</h2>
+        <h2 className="text-lg font-semibold uppercase">{item.title}</h2>
 
         {/* Description */}
-        <p className="text-sm opacity-80 mt-2">{description}</p>
+        <p className="text-sm opacity-80 mt-2">{item.description}</p>
 
         {/* Secondary Button */}
         <button className="mt-4 px-6 py-2 bg-white text-black rounded-full text-sm font-medium hover:bg-gray-200 transition-all">
@@ -50,4 +50,4 @@ const Card = ({ className, btnTxt, image, title, description, price }) => {
   );
 };
 
-export default Card;
+export default ProductCard;

@@ -16,19 +16,19 @@ const Category = () => {
               image={casualSweatShirt} 
               title="Casual Comfort" 
               description="Effortless style meets all-day comfort in our cozy sweatshirts."
-              buttonText="Explore Collection"
+              btnTxt="Explore"
             />
             <Card 
               image={blackBlazer} 
               title="Power Dressing" 
               description="Elevate your formal look with sharp, tailored blazers."
-              buttonText="Explore Collection"
+              btnTxt="Explore"
             />
             <Card 
               image={jacket} 
               title="Winter Classics" 
               description="Stay warm and stylish with our premium winter collection."
-              buttonText="Explore Collection"
+              btnTxt="Explore"
             />
           </div>
         </div>
