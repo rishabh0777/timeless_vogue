@@ -18,7 +18,7 @@ export const seedData = async () => {
     console.log('🗑 Existing products deleted');
 
     // Insert new data
-    const rawData = fs.readFileSync('./data/data.json', 'utf-8');
+    const rawData = fs.readFileSync('./src/data/data.json', 'utf-8');
     const data = JSON.parse(rawData);
     await Product.insertMany(data);
     console.log('✅ Data successfully seeded');
