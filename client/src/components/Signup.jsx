@@ -51,39 +51,6 @@ const Signup = () => {
               <i class="ri-facebook-circle-fill cursor-pointer"></i>
               <i class="ri-github-fill cursor-pointer"></i>
             </div>
-            <div className='flex gap-4 px-8 justify-start w-full'>
-              <label
-                className="flex gap-2 justify-center items-center cursor-pointer"
-                htmlFor="seller">
-                <input
-                  className="hidden peer"
-                  type="radio"
-                  name="userType"
-                  value="seller"
-                  id="seller"
-                />
-                <div className="w-5 h-5 border-2 border-zinc-500 rounded-full flex justify-center items-center peer-checked:bg-zinc-900 peer-checked:border-zinc-800 transition-all duration-300">
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
-                </div>
-                <p>Seller</p>
-              </label>
-
-              <label
-                className="flex gap-2 justify-center items-center cursor-pointer"
-                htmlFor="customer">
-                <input
-                  className="hidden peer"
-                  type="radio"
-                  name="userType"
-                  value="customer"
-                  id="customer"
-                />
-                <div className="w-5 h-5 border-2 border-zinc-500 rounded-full flex justify-center items-center peer-checked:bg-zinc-900 peer-checked:border-zinc-800 transition-all duration-300">
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
-                </div>
-                <p>Customer</p>
-              </label>
-            </div>
             <div>
             </div>
           </form>

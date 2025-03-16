@@ -6,12 +6,13 @@ import Shop from './components/Shop';
 import Login from './components/Login';
 import Signup from './components/Signup'
 import About from './components/About';
-import DataProvider from './contexts/DataContext';
+import ProductProvider from './contexts/ProductContext';
 
 const App = () => {
   return (
     <DataProvider value={{products: []}}>
     <Router>
+      <ScrollToTop />
       <Routes>
         <Route path='/' element={<Layout />}>
           <Route index element={<Dashboard />} />

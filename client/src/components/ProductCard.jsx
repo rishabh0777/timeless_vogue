@@ -22,7 +22,7 @@ const ProductCard = ({ className, item, price, btnTxt }) => {
 
   return (
     <div
-      className={`bg-zinc-900 w-[25vw] min-h-[51vh] cursor-pointer p-0 relative overflow-hidden ${className}`}
+      className={`bg-zinc-900 w-[25vw] h-[51vh] cursor-pointer p-0 relative overflow-hidden ${className}`}
       onMouseEnter={hoverEffect}
       onMouseLeave={leaveEffect}
     >
