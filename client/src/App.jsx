@@ -6,11 +6,11 @@ import Shop from './components/Shop';
 import Login from './components/Login';
 import Signup from './components/Signup'
 import About from './components/About';
-import ProductProvider from './contexts/ProductContext';
+import DataProvider from './contexts/DataContext';
 
 const App = () => {
   return (
-    <ProductProvider value={{products: []}}>
+    <DataProvider value={{products: []}}>
     <Router>
       <Routes>
         <Route path='/' element={<Layout />}>
@@ -23,7 +23,7 @@ const App = () => {
 
       </Routes>
     </Router>
-    </ProductProvider>
+    </DataProvider>
 
   )
 }
