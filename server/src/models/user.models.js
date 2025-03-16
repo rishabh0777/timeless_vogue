@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import Cart from './cart.models.js';
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 
 const userSchema = new mongoose.Schema({
     fullname:{
@@ -35,15 +36,22 @@ const userSchema = new mongoose.Schema({
     cart: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Cart'
-    }
+    },
+    refreshToken: {
+    type: String
+  }
 }, {timestamps: true})
 
 //save hash password -->
 userSchema.pre("save", async function(next){
     if(!this.isModified("password")) return next();
-    this.password = await bcrypt.hash(this.password)
+    this.password = await bcrypt.hash(this.password, 10)
     next();
 })
+//compare password --->
+userSchema.methods.matchPassword = async function(password){
+     return await bcrypt.compare(password, this.password)
+}
 
 //generate access token --->
 userSchema.methods.generateAccessToken = function(){
