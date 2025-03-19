@@ -1,11 +1,8 @@
-
+import dotenv from "dotenv"
+dotenv.config()
 import nodemailer from "nodemailer";
 
-
-
-const sendEmail = async (to,subject,html)=>{
-
-    const transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_PORT,
   secure: false,
@@ -14,6 +11,10 @@ const sendEmail = async (to,subject,html)=>{
     pass: process.env.SMTP_PASS,
   }
 })
+
+const sendEmail = async (to,subject,html)=>{
+
+   
     const options = {
       from:`timeless vogue <timelessvogue202@gmail.com>`,
       to,
@@ -21,7 +22,7 @@ const sendEmail = async (to,subject,html)=>{
       html
     }
 
-    const info = await transporter.sendMail(options);
+    const info = transporter.sendMail(options);
     return info;
 }
 

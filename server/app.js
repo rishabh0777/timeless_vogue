@@ -4,12 +4,17 @@ import cors from 'cors';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import connectDB from './src/db/db.js';
+import User from './src/models/user.models.js'
+
+
 
 // Connect to database
 await connectDB();
 const app = express();
+app.use(cors());
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN,
+  origin: 'https://glorious-space-sniffle-q5r6w755g4qf4gg7-5173.app.github.dev',
   credentials: true
 }));
 
@@ -18,7 +23,15 @@ app.use(express.urlencoded({ extended: true, limit: '16kb' }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
+
+
 // Routes
+
+  app.get('/', async (req, res)=>{
+     const alluser = await User.find();
+     res.json(alluser)
+  })
+
 // Product Route
 import productRouter from './src/routes/product.routes.js';
 app.use('/api/v1/products', productRouter);

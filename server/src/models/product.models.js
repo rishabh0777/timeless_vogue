@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import Cart from './cart.models.js'
 
 const productSchema = new mongoose.Schema({
     title: {
@@ -22,10 +21,7 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    cart: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: Cart
-    }
+
 });
 
 const Product = mongoose.model('Product', productSchema);

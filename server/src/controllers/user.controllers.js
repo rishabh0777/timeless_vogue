@@ -50,6 +50,9 @@ const register = asyncHandler(async (req, res)=>{
         {expiresIn: "15m"}
         );
     //Email verification Link
+    if(!token){
+        console.log('Token not found')
+    }
     const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${token}`
     // send email
     await sendEmail(
@@ -69,6 +72,7 @@ const register = asyncHandler(async (req, res)=>{
 
 const verifyEmail = asyncHandler(async (req, res)=>{
     const {token} = req.query;
+    console.log(req.query);
 
     if(!token){
         throw new ApiError(400, "Invalid token")
