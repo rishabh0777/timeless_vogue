@@ -1,8 +1,46 @@
-import React from 'react'
+import React,{ use, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useInput } from '../contexts/AuthContext'
+import axios from 'axios';
+import { AuthContext } from '../contexts/AuthContext';
 
 const Login = () => {
-  const navigate = useNavigate()
+ const navigate = useNavigate();
+ const { setUserData } = useContext(AuthContext); 
+   // State for user input
+   const [username, handleUsernameChange] = useInput("")
+   const [password, handlePasswordChange] = useInput("")
+
+   const handleLogin = async (e) => {
+    e.preventDefault();
+    const userData = {
+      username,
+      password
+    }
+    try {
+      const response = await axios.post('api/v1/user/login', userData);
+      console.log(response);
+      if(response?.status===200 || response?.status===201){
+        const { accessToken, refreshToken, user } = response.data.data;
+        setUserData(user)
+
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
+
+        // ✅ Save user info in state (optional)
+        localStorage.setItem("user", JSON.stringify(user));
+        navigate('/')
+        
+      }else{
+        alert('Something went wrong!')
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+    
+
   return (
     <div 
     className = "relative authBg w-full h-screen flex justify-center items-center">
@@ -14,17 +52,21 @@ const Login = () => {
           <div className='w-[80%] flex justify-between mb-[5vh]'><h1 className='font-bold text-[1.3vw]'>Log in</h1><p className='text-[1.2vw]'>Don't have an account? <span onClick={()=> navigate('/Signup')} className='font-bold underline cursor-pointer'> Signup</span></p></div>
           <form 
           className='w-[80%] min-h-[30vh] flex flex-col items-center'
-          action="">
+          action=""
+          onSubmit={handleLogin}
+          >
             
             <input 
             className='bg-white text-zinc-800 py-2 px-4 w-[80%] mb-[4vh] rounded-md shadow-lg border-2 border-zinc-100 outline-none'
             name='username' 
+            onChange={handleUsernameChange}
             type="text" 
             placeholder='Enter your email or username' />
             <input 
             className='bg-white text-zinc-800 py-2 px-4 w-[80%] mb-[4vh] rounded-md shadow-lg border-2 border-zinc-100 outline-none' 
-            name='username' 
-            type="password" 
+            name='password' 
+            type="password"
+            onChange={handlePasswordChange} 
             placeholder='Enter your password' />
             <button className='bg-zinc-900 text-white font-bold w-[40%] py-2 rounded-full mb-[4vh] cursor-pointer'>Log in</button>
             <div className='w-full flex justify-center items-center mb-[4vh]'>

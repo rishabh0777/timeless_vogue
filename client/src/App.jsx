@@ -6,10 +6,14 @@ import Shop from './components/Shop';
 import Login from './components/Login';
 import Signup from './components/Signup'
 import About from './components/About';
-import ProductProvider from './contexts/ProductContext';
+import ScrollToTop from './components/ScrollToTop';
+import EmailVerification from './components/EmailVerification'
+import DataProvider from './contexts/DataContext';
+import AuthProvider from './contexts/AuthContext';
 
 const App = () => {
   return (
+    <AuthProvider>
     <DataProvider value={{products: []}}>
     <Router>
       <ScrollToTop />
@@ -21,10 +25,11 @@ const App = () => {
         <Route path='login' element={<Login />} />
         <Route path='signup' element={<Signup />} />
         <Route path='shop' element={<Shop />} />
-
+        <Route path='verify-email' element={<EmailVerification />} />
       </Routes>
     </Router>
     </DataProvider>
+    </AuthProvider>
 
   )
 }

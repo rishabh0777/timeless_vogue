@@ -1,13 +1,15 @@
-import React,{ useState, useRef } from 'react'
+import React,{ useState, useRef, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { AuthContext } from '../contexts/AuthContext';
+import axios from 'axios';
 
 const Navbar = () => {
-  const [user, setUser] = useState(false);
+  const { userData, setUserData } = useContext(AuthContext); 
   const navigate = useNavigate();
   const optionRef = useRef();
 
   const toggleOptions = () => {
-  if(user){
+  if(userData){
     if (optionRef.current?.classList.contains("hidden")) {
     optionRef.current.classList.remove("hidden");
     optionRef.current.classList.add("flex");
@@ -19,7 +21,29 @@ const Navbar = () => {
 };
 
 const redirectToLogin = ()=>{
-  if(!user) navigate('/login')
+  if(!userData) navigate('/login')
+}
+
+const handleLogout = async (e) => {
+  e.preventDefault();
+  
+  try {
+    const response = await axios.post('api/v1/user/logout');
+    console.log(response);
+    if(response?.status===200 || response?.status===201){
+      setUserData(false)
+       
+      optionRef.current.classList.add("hidden");
+      optionRef.current.classList.remove("flex");
+      
+      navigate('/')
+      
+    }else{
+      alert('Something went wrong!')
+    }
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 
@@ -45,8 +69,8 @@ const redirectToLogin = ()=>{
              >
               <i className="ri-user-3-line cursor-pointer"></i>
           {
-            user?(
-                <p>Rishabh Srivastava</p>
+            userData?(
+                <p>{userData.fullname}</p>
               ):(
                 <p>Login</p>
               )
@@ -62,7 +86,9 @@ const redirectToLogin = ()=>{
       </h3>
       <p className='flex gap-2 cursor-pointer'><i className="ri-shopping-bag-4-fill"></i>Orders</p>
       <p className='flex gap-2 cursor-pointer'><i className="ri-moon-clear-line"></i>Dark</p>
-      <button className='flex gap-2 cursor-pointer text-red-500'><i className="ri-logout-circle-line"></i> Logout</button>
+      <button 
+      onClick={handleLogout}
+      className='flex gap-2 cursor-pointer text-red-500'><i className="ri-logout-circle-line"></i> Logout</button>
     </div>
     </>
   )

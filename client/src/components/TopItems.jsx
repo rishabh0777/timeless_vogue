@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { ProductContext } from '../contexts/ProductContext';
+import { DataContext } from '../contexts/DataContext';
 import ProductCard from './ProductCard';
 
 const TopItems = () => {
   const [newArrival, setNewArrival] = useState([]);
-  const { products } = useContext(ProductContext);
+  const { products } = useContext(DataContext);
 
   useEffect(() => {
     if (products && Array.isArray(products.data)) {

@@ -1,15 +1,30 @@
-import { createContext, useState, useEffect } from "react";
-import axios from 'axios';
+import { createContext, useState} from "react";
+
+
+// Custom Hook for Input Handling
+export const useInput = (initialValue="") => {
+  const [value, setValue] = useState(initialValue);
+
+  const handleChange = (event) => {
+    setValue(event.target.value);
+  };
+
+  return [value, handleChange];
+};
+
+
+
 
 
 const AuthContext = createContext();
 
 
+const AuthProvider = ({children})=>{ 
+  const [userData, setUserData] = useState(false)
 
 
-const AuthProvider = ({children})=>{
   return(
-      <AuthContext.Provider>
+      <AuthContext.Provider value={{userData, setUserData}}>
         {children}
       </AuthContext.Provider>
     )

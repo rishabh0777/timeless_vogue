@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import ProductCard from './ProductCard';
 import Navbar from './Navbar';
-import { ProductContext } from '../contexts/ProductContext';
+import { DataContext } from '../contexts/DataContext';
 
 const Shop = () => {
-  const { products } = useContext(ProductContext);
+  const { products } = useContext(DataContext);
   const [myProducts, setMyProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
 
@@ -31,7 +31,7 @@ const Shop = () => {
               <p onClick={() => setSelectedCategory("Top Wear")} className='cursor-pointer'>TOP WEAR</p>
               <p onClick={() => setSelectedCategory("Bottom Wear")} className='cursor-pointer'>BOTTOM WEAR</p>
               <p onClick={() => setSelectedCategory("Winter Wear")} className='cursor-pointer'>WINTER</p>
-              <p onClick={() => setSelectedCategory("Summer Wear")} className='cursor-pointer'>SUMMER</p>
+              <p onClick={() => setSelectedCategory("Summer DataContext")} className='cursor-pointer'>SUMMER</p>
               <p onClick={() => setSelectedCategory("Informal")} className='cursor-pointer'>INFORMAL</p>
               <p onClick={() => setSelectedCategory("Formal")} className='cursor-pointer'>FORMAL</p>
             </div>
