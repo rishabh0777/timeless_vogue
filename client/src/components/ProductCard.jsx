@@ -27,7 +27,7 @@ const ProductCard = ({ className, item, price, btnTxt }) => {
       onMouseLeave={leaveEffect}
     >
       {/* Background Image */}
-      <img className="w-full absolute" src={item.image} alt={item.title} />
+      <img loading="lazy" className="w-full absolute" src={item.image} alt={item.title} />
 
      
       {/* Information Section */}

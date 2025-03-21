@@ -75,9 +75,9 @@ const Login = () => {
               <div className='w-[30%] h-[0.2vh] bg-zinc-700'></div>
             </div>
             <div className='text-[3vw] flex gap-4'>
-              <i class="ri-google-fill cursor-pointer"></i>
-              <i class="ri-facebook-circle-fill cursor-pointer"></i>
-              <i class="ri-github-fill cursor-pointer"></i>
+              <i className="ri-google-fill cursor-pointer"></i>
+              <i className="ri-facebook-circle-fill cursor-pointer"></i>
+              <i className="ri-github-fill cursor-pointer"></i>
             </div>
           </form>
         </div>

@@ -15,7 +15,7 @@ const Dashboard = () => {
           <button className="absolute z-[10] text-white bg-zinc-900 rounded-lg top-[70%] py-4 px-5 left-[35%] cursor-pointer text-[1.3vw]">
             Discover Elegance
           </button>
-          <img className="w-full h-full absolute z-[8] object-cover object-top" src={heroPoster} alt="Hero Poster" />
+          <img loading='lazy' className="w-full h-full absolute z-[8] object-cover object-top" src={heroPoster} alt="Hero Poster" />
         </div>
       </div>
       <Category />
