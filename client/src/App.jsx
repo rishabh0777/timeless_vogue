@@ -6,6 +6,7 @@ import Shop from './components/Shop';
 import Login from './components/Login';
 import Signup from './components/Signup'
 import About from './components/About';
+import Cart from './components/Cart';
 import ScrollToTop from './components/ScrollToTop';
 import EmailVerification from './components/EmailVerification'
 import DataProvider from './contexts/DataContext';
@@ -21,6 +22,7 @@ const App = () => {
         <Route path='/' element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path='about' element={<About />} />
+          <Route path='cart' element={<Cart />} />
         </Route>
         <Route path='login' element={<Login />} />
         <Route path='signup' element={<Signup />} />

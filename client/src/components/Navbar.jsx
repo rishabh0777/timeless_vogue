@@ -63,7 +63,7 @@ const handleLogout = async (e) => {
           <i className="ri-search-line cursor-pointer absolute right-[1vw] top-1/2 transform -translate-y-1/2 -translate-x-[1vw]"></i>
         </div>
         <div className='flex gap-[3vw]'>
-          <i className="ri-shopping-bag-line cursor-pointer"></i>
+          <i onClick={()=>navigate('/cart')} className="ri-shopping-bag-line cursor-pointer"></i>
           <div onClick={toggleOptions} className='flex gap-[0.7vw] cursor-pointer'>
             <div onClick={redirectToLogin} className='flex gap-[0.7vw] cursor-pointer'
              >
