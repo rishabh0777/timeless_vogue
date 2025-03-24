@@ -35,6 +35,11 @@ const handleLogout = async (e) => {
        
       optionRef.current.classList.add("hidden");
       optionRef.current.classList.remove("flex");
+      localStorage.removeItem('user')
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('refreshToken')
+
+
       
       navigate('/')
       

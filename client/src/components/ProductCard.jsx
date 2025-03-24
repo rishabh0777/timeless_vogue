@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import gsap from 'gsap';
 
-const ProductCard = ({ className, item, price, btnTxt }) => {
+const ProductCard = ({ className, item, price, btnTxt, onClick }) => {
   const categoryInformationRef = useRef(null);
 
   const hoverEffect = () => {
@@ -42,7 +42,9 @@ const ProductCard = ({ className, item, price, btnTxt }) => {
         <p className="text-sm opacity-80 mt-2">{item.description}</p>
 
         {/* Secondary Button */}
-        <button className="mt-4 px-6 py-2 bg-white text-black rounded-full text-sm font-medium hover:bg-gray-200 transition-all">
+        <button 
+        onClick={onClick}
+        className="mt-4 px-6 py-2 bg-white text-black rounded-full text-sm font-medium hover:bg-gray-200 transition-all cursor-pointer">
           {btnTxt} <span className="text-green-500">{price}</span>
         </button>
       </div>

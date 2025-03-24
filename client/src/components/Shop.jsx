@@ -1,12 +1,35 @@
 import React, { useState, useEffect, useContext } from 'react';
 import ProductCard from './ProductCard';
 import Navbar from './Navbar';
-import { DataContext } from '../contexts/DataContext';
+import { DataContext, addCart } from '../contexts/DataContext';
 
 const Shop = () => {
   const { products } = useContext(DataContext);
   const [myProducts, setMyProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [productId, setProductId] = useState(null)
+  let user = JSON.parse(localStorage.getItem('user'))
+
+  const userAndProductId = {
+    userId: user?._id,
+    productId
+  }
+
+  const addItemToCart = async ()=>{
+    if(!userAndProductId){
+      console.log("User or Product id are not found")
+    }
+    const data = await addCart(userAndProductId);
+    console.log(productId)
+  }
+
+  useEffect(()=>{
+    if(productId){
+      addItemToCart()
+    }
+  },[productId])
+
+
 
   useEffect(() => {
     if (products && Array.isArray(products.data)) {
@@ -17,7 +40,7 @@ const Shop = () => {
           );
       setMyProducts(filteredProducts);
     }
-  }, [products, selectedCategory]);
+  }, [products, selectedCategory]); 
 
   return (
     <>
@@ -54,6 +77,7 @@ const Shop = () => {
               item={product} 
               btnTxt={'Add to Cart'}
               price={`$ ${product.price}`}
+              onClick={()=>setProductId(product._id)}
             />
           ))}
         </div>

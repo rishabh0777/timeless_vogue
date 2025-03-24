@@ -7,7 +7,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   server:{
     proxy: {
-      '/api': 'https://glorious-space-sniffle-q5r6w755g4qf4gg7-5000.app.github.dev'
+      '/api': 'http://localhost:5000'
     }
   },
   plugins: [
