@@ -6,7 +6,8 @@ import { AuthContext } from '../contexts/AuthContext';
 
 const Login = () => {
  const navigate = useNavigate();
- const { setUserData } = useContext(AuthContext); 
+ const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext); 
+
    // State for user input
    const [username, handleUsernameChange] = useInput("")
    const [password, handlePasswordChange] = useInput("")
@@ -22,13 +23,14 @@ const Login = () => {
       console.log(response);
       if(response?.status===200 || response?.status===201){
         const { accessToken, refreshToken, user } = response.data.data;
-        setUserData(user)
+        
 
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
 
         // ✅ Save user info in state (optional)
         localStorage.setItem("user", JSON.stringify(user));
+        setIsLoggedIn(true)
         navigate('/')
         
       }else{

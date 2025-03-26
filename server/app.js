@@ -1,10 +1,10 @@
 import dotenv from 'dotenv';
-dotenv.config();
+dotenv.config
 import cors from 'cors';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import connectDB from './src/db/db.js';
-import User from './src/models/user.models.js'
+import User from './src/models/user.models.js';
 
 
 

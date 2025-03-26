@@ -20,11 +20,11 @@ const AuthContext = createContext();
 
 
 const AuthProvider = ({children})=>{ 
-  const [userData, setUserData] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
 
   return(
-      <AuthContext.Provider value={{userData, setUserData}}>
+      <AuthContext.Provider value={{isLoggedIn, setIsLoggedIn}}>
         {children}
       </AuthContext.Provider>
     )

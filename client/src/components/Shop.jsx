@@ -20,7 +20,6 @@ const Shop = () => {
       console.log("User or Product id are not found")
     }
     const data = await addCart(userAndProductId);
-    console.log(productId)
   }
 
   useEffect(()=>{

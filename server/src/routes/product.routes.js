@@ -1,8 +1,16 @@
 import { Router } from "express";
-import { getProducts } from "../controllers/products.controllers.js";
+import { getProducts, addToCart, getCart, removeItemFromCart } from "../controllers/products.controllers.js";
+import { verifyJWT } from '../middlewares/auth.middlewares.js'
+
 
 const router = Router();
 
 router.route('/').get(getProducts);
+
+
+// secured routes
+router.route('/cart').post(verifyJWT, addToCart);
+router.route('/cart/:userId').get(verifyJWT, getCart);
+router.route('/cart').delete(verifyJWT, removeItemFromCart);
 
 export default router;

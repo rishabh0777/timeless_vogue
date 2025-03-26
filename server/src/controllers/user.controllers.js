@@ -48,7 +48,7 @@ const register = asyncHandler(async (req, res)=>{
         {username, email, password, fullname}, 
         process.env.JWT_SECRET,
         {expiresIn: "15m"}
-        );
+        ); 
     //Email verification Link
     if(!token){
         console.log('Token not found')

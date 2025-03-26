@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {getCart} from '../contexts/DataContext';
-import { DataContext } from '../contexts/DataContext';
+import { DataContext, removeItem } from '../contexts/DataContext';
 import { AuthContext } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom'
 
@@ -8,27 +7,28 @@ import { useNavigate } from 'react-router-dom'
 const Cart = () => {
   const navigate = useNavigate()
   const { cart, setCart } = useContext(DataContext)
-  let user = JSON.parse(localStorage.getItem('user')) 
-  useEffect(() => {
-  const fetchData = async () => {
-    if (user) {
-      const myCart = await getCart(user?._id);
-      if (myCart) {
-        setCart(myCart);
-      } else {
-        console.log("Cart not found");
-      }
-    } else console.log("User not found");
-  };
+  const user = JSON.parse(localStorage.getItem('user'))
+  const [productId, setProductId] = useState(null)
 
-  fetchData();
-}, []); // Include setCart as a dependency
+
+  const userAndProductId = {
+    userId: user?._id,
+    productId
+  }
+  
+
+ const removeItemFromCart = async ()=>{
+    if(!userAndProductId){
+      console.log("User or Product id are not found")
+    }
+    const data = await removeItem(userAndProductId);
+  }
 
   useEffect(()=>{
-    
-      console.log(cart)
- 
-  },[setCart])
+    if(productId){
+      removeItemFromCart()
+    }
+  },[productId])
 
   
 
@@ -64,7 +64,9 @@ const Cart = () => {
             <h2 className='font-bold'>{Cart.productId.title}</h2>
             <p>{Cart.productId.description}</p>
           </div>
-          <div className='w-[10%] h-[28vh] py-2 flex items-center gap-4'>
+          <div 
+            onClick={()=> setProductId(Cart.productId)}
+            className='w-[10%] h-[28vh] py-2 flex items-center gap-4'>
             <p>X</p>
           </div>
         </div>
@@ -76,7 +78,7 @@ const Cart = () => {
       </div>
     ))
   ) : (
-    <h1>Cart not found</h1>
+    <h1 className='text-center mt-12'>Your Cart is empty</h1>
   )
 }
 

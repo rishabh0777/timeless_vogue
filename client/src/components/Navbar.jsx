@@ -1,15 +1,18 @@
-import React,{ useState, useRef, useContext } from 'react'
+import React,{ useState, useRef, useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../contexts/AuthContext';
+import {DataContext} from '../contexts/DataContext';
 import axios from 'axios';
 
 const Navbar = () => {
-  const { userData, setUserData } = useContext(AuthContext); 
+  const {cart, setCart, cartLength, setCartLength} = useContext(DataContext); 
+ const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext); 
   const navigate = useNavigate();
   const optionRef = useRef();
+  const user = JSON.parse(localStorage.getItem('user'))
 
   const toggleOptions = () => {
-  if(userData){
+  if(isLoggedIn){
     if (optionRef.current?.classList.contains("hidden")) {
     optionRef.current.classList.remove("hidden");
     optionRef.current.classList.add("flex");
@@ -20,8 +23,9 @@ const Navbar = () => {
   }
 };
 
+
 const redirectToLogin = ()=>{
-  if(!userData) navigate('/login')
+  if(!isLoggedIn) navigate('/login')
 }
 
 const handleLogout = async (e) => {
@@ -31,15 +35,17 @@ const handleLogout = async (e) => {
     const response = await axios.post('api/v1/user/logout');
     console.log(response);
     if(response?.status===200 || response?.status===201){
-      setUserData(false)
        
       optionRef.current.classList.add("hidden");
       optionRef.current.classList.remove("flex");
       localStorage.removeItem('user')
       localStorage.removeItem('accessToken')
       localStorage.removeItem('refreshToken')
+      setIsLoggedIn(false)
+      if(!user){
+        setCart({})
 
-
+      }
       
       navigate('/')
       
@@ -68,14 +74,31 @@ const handleLogout = async (e) => {
           <i className="ri-search-line cursor-pointer absolute right-[1vw] top-1/2 transform -translate-y-1/2 -translate-x-[1vw]"></i>
         </div>
         <div className='flex gap-[3vw]'>
-          <i onClick={()=>navigate('/cart')} className="ri-shopping-bag-line cursor-pointer"></i>
+         <div 
+         className='flex relative'
+         onClick={()=>navigate('/cart')}>
+            
+            <i className="ri-shopping-bag-line cursor-pointer"></i>
+            {
+              cartLength?(
+                  cartLength>0?( 
+                  <p className=' h-[1.5vw] w-[1.5vw] flex justify-center items-center rounded-full text-[0.9vw] absolute left-2 top-[-1.2vh] bg-zinc-800 text-white'>{cartLength}</p>
+                ):(
+                  <p></p>
+                )
+                ):(
+                  <p></p>
+                )
+            }
+
+         </div>
           <div onClick={toggleOptions} className='flex gap-[0.7vw] cursor-pointer'>
             <div onClick={redirectToLogin} className='flex gap-[0.7vw] cursor-pointer'
              >
               <i className="ri-user-3-line cursor-pointer"></i>
           {
-            userData?(
-                <p>{userData.fullname}</p>
+            isLoggedIn?(
+                <p>{user.fullname}</p>
               ):(
                 <p>Login</p>
               )
