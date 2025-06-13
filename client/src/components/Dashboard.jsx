@@ -2,8 +2,11 @@ import React from 'react';
 import heroPoster from '../assets/Images/Poster/heroPoster.jpg';
 import Category from './Category';
 import TopItems from './TopItems';
+import { useNavigate } from 'react-router-dom'
+
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   return (
     <>
       <div className="w-full min-h-screen relative">
@@ -12,7 +15,7 @@ const Dashboard = () => {
           <p className="absolute z-[10] text-white text-[2vw] w-[45%] top-[45%] left-[3vw]">
             Unparalleled Sophistication, Endless Elegance – <span className="font-bold">Welcome to Timeless Vogue.</span>
           </p>
-          <button className="absolute z-[10] text-white bg-zinc-900 rounded-lg top-[70%] py-4 px-5 left-[35%] cursor-pointer text-[1.3vw]">
+          <button onClick = {()=> navigate('/shop')} className="absolute z-[10] text-white bg-zinc-900 rounded-lg top-[70%] py-4 px-5 left-[35%] cursor-pointer text-[1.3vw]">
             Discover Elegance
           </button>
           <img loading='lazy' className="w-full h-full absolute z-[8] object-cover object-top" src={heroPoster} alt="Hero Poster" />
