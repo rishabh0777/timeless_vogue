@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import gsap from 'gsap';
 
-const ProductCard = ({ className, item, price, btnTxt, onClick }) => {
+const ProductCard = ({ className, item, price, btnTxt, onClick, btnClick }) => {
   const categoryInformationRef = useRef(null);
 
   const hoverEffect = () => {
@@ -22,12 +22,13 @@ const ProductCard = ({ className, item, price, btnTxt, onClick }) => {
 
   return (
     <div
-      className={`bg-zinc-900 w-[25vw] h-[51vh] cursor-pointer p-0 relative overflow-hidden ${className}`}
+    
+      className={`bg-zinc-900 w-[25vw] min-h-[51vh] cursor-pointer p-0 relative overflow-hidden ${className}`}
       onMouseEnter={hoverEffect}
       onMouseLeave={leaveEffect}
     >
       {/* Background Image */}
-      <img loading="lazy" className="w-full absolute" src={item.image} alt={item.title} />
+      <img onClick={onClick} loading="lazy" className="w-full absolute" src={item.image} alt={item.title} />
 
      
       {/* Information Section */}
@@ -42,12 +43,13 @@ const ProductCard = ({ className, item, price, btnTxt, onClick }) => {
         <p className="text-sm opacity-80 mt-2">{item.description}</p>
 
         {/* Secondary Button */}
-        <button 
-        onClick={onClick}
-        className="mt-4 px-6 py-2 bg-white text-black rounded-full text-sm font-medium hover:bg-gray-200 transition-all cursor-pointer">
+        
+      </div>
+      <button 
+        onClick={btnClick}
+        className="mt-4 px-6 py-3 w-[60%] bg-white text-black absolute z-50 left-1/2 bottom-[1vh] transform -translate-x-1/2 rounded-full text-sm font-medium hover:bg-gray-200 transition-all cursor-pointer">
           {btnTxt} <span className="text-green-500">{price}</span>
         </button>
-      </div>
     </div>
   );
 };

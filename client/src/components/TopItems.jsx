@@ -1,10 +1,53 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { DataContext } from '../contexts/DataContext';
+import { DataContext, addCart, fetchData } from '../contexts/DataContext';
+import { AuthContext } from '../contexts/AuthContext';
 import ProductCard from './ProductCard';
 
 const TopItems = () => {
   const [newArrival, setNewArrival] = useState([]);
-  const { products } = useContext(DataContext);
+  const { products, setCart, setCartLength } = useContext(DataContext);
+  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+
+  const [productId, setProductId] = useState(null);
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  const info = {
+    userId: user?._id,
+    setCart,
+    setCartLength,
+    isLoggedIn,
+    setIsLoggedIn,
+  };
+
+  const addItemToCart = async () => {
+    if (!user?._id || !productId) {
+      console.log("User or Product ID missing");
+      return;
+    }
+
+    const cartData = {
+      userId: user._id,
+      productId: productId,
+    };
+
+    try {
+      const data = await addCart(cartData);
+      if (data) {
+        await fetchData(info);
+        console.log("Item added to cart from Shop");
+      } else {
+        console.log("Add to cart failed");
+      }
+    } catch (err) {
+      console.error("Error adding to cart:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (productId) {
+      addItemToCart();
+    }
+  }, [productId]);
 
   useEffect(() => {
     if (products && Array.isArray(products.data)) {
@@ -15,8 +58,8 @@ const TopItems = () => {
       setNewArrival(filteredProducts);
     }
   }, [products]);
-  
-  
+
+
 
   return (
     <div>
@@ -31,6 +74,7 @@ const TopItems = () => {
                   item={arrival}
                   price={`$ ${arrival.price}`}
                   btnTxt="Add to cart"
+                  btnClick={() => { setProductId(arrival._id) }}
                 />
               ))
             ) : (

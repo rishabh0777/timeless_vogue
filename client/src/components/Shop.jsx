@@ -3,22 +3,19 @@ import ProductCard from "./ProductCard";
 import Navbar from "./Navbar";
 import { DataContext, addCart, fetchData } from "../contexts/DataContext";
 import { AuthContext } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Shop = () => {
-  const { products, setCart, setCartLength } = useContext(DataContext);
+  const { products, setCart, setCartLength, setMyProductId } = useContext(DataContext);
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [myProducts, setMyProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [productId, setProductId] = useState(null);
-  let user = JSON.parse(localStorage.getItem("user"));
 
-  const userAndProductId = {
-    userId: user?._id,
-    productId,
-  };
+  const user = JSON.parse(localStorage.getItem("user"));
 
-  // cart data fetching information for function
   const info = {
     userId: user?._id,
     setCart,
@@ -28,12 +25,26 @@ const Shop = () => {
   };
 
   const addItemToCart = async () => {
-    if (!userAndProductId) {
-      console.log("User or Product id are not found");
+    if (!user?._id || !productId) {
+      console.log("User or Product ID missing");
+      return;
     }
-    const data = await addCart(userAndProductId);
-    if (data) {
-      await fetchData(info);
+
+    const cartData = {
+      userId: user._id,
+      productId: productId,
+    };
+
+    try {
+      const data = await addCart(cartData);
+      if (data) {
+        await fetchData(info);
+        console.log("Item added to cart from Shop");
+      } else {
+        console.log("Add to cart failed");
+      }
+    } catch (err) {
+      console.error("Error adding to cart:", err);
     }
   };
 
@@ -57,6 +68,11 @@ const Shop = () => {
     }
   }, [products, selectedCategory]);
 
+  const handleSetMyProductId = (id) => {
+    setMyProductId(id);
+    navigate(`/product/${id}`);
+  };
+
   return (
     <>
       <Navbar />
@@ -65,55 +81,17 @@ const Shop = () => {
           <h1>The Wardrobe</h1>
           <div className="w-full flex justify-between px-12">
             <div className="flex gap-4 text-[0.99vw]">
-              <p
-                onClick={() => setSelectedCategory("All")}
-                className="font-bold cursor-pointer"
-              >
-                ALL
-              </p>
-              <p
-                onClick={() => setSelectedCategory("Top Wear")}
-                className="cursor-pointer"
-              >
-                TOP WEAR
-              </p>
-              <p
-                onClick={() => setSelectedCategory("Bottom Wear")}
-                className="cursor-pointer"
-              >
-                BOTTOM WEAR
-              </p>
-              <p
-                onClick={() => setSelectedCategory("Winter Wear")}
-                className="cursor-pointer"
-              >
-                WINTER
-              </p>
-              <p
-                onClick={() => setSelectedCategory("Summer DataContext")}
-                className="cursor-pointer"
-              >
-                SUMMER
-              </p>
-              <p
-                onClick={() => setSelectedCategory("Informal")}
-                className="cursor-pointer"
-              >
-                INFORMAL
-              </p>
-              <p
-                onClick={() => setSelectedCategory("Formal")}
-                className="cursor-pointer"
-              >
-                FORMAL
-              </p>
+              {["All", "Top Wear", "Bottom Wear", "Winter Wear", "Summer", "Informal", "Formal"].map((category) => (
+                <p
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`cursor-pointer ${selectedCategory === category ? "font-bold" : ""}`}
+                >
+                  {category.toUpperCase()}
+                </p>
+              ))}
             </div>
-            {/* filter select options  */}
-            <select
-              className="px-2 py-1 text-[0.99vw] rounded-md"
-              name="filter"
-              id=""
-            >
+            <select className="px-2 py-1 text-[0.99vw] rounded-md" name="filter">
               <option value="filter">Filter</option>
               <option value="popularity">Popularity</option>
               <option value="price">Price</option>
@@ -122,6 +100,7 @@ const Shop = () => {
             </select>
           </div>
         </div>
+
         <div className="w-full absolute top-[30vh] overflow-scroll min-h-[100vh] py-10 px-12 grid grid-cols-3 gap-2 justify-items-center shadow-lg z-50">
           {myProducts &&
             myProducts.map((product) => (
@@ -130,7 +109,8 @@ const Shop = () => {
                 item={product}
                 btnTxt={"Add to Cart"}
                 price={`$ ${product.price}`}
-                onClick={() => setProductId(product._id)}
+                onClick={() => handleSetMyProductId(product._id)}
+                btnClick={() => setProductId(product._id)}
               />
             ))}
         </div>

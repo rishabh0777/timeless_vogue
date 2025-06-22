@@ -57,7 +57,7 @@ const Cart = () => {
             cart.items.map((Cart, index) => (
               <div key={index} className="w-full min-h-[30vh] flex">
                 <div className="w-[60%] h-[28vh] overflow-hidden gap-12 flex items-center justify-between px-12">
-                  <div className="w-[11vw] h-[23vh] bg-zinc-500">
+                  <div className="w-[11vw] min-h-[20vh] bg-zinc-500">
                     <img
                       loading="lazy"
                       className="w-full"

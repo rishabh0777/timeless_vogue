@@ -11,6 +11,7 @@ const router = Router();
 
 router.route("/").get(getProducts);
 
+
 // secured routes
 router.route("/cart").post(verifyJWT, addToCart);
 router.route("/cart/:userId").get(verifyJWT, getCart);

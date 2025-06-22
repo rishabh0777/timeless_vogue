@@ -6,7 +6,7 @@ const DataContext = createContext();
 
 export const addCart = async ({ userId, productId }) => {
   try {
-    const response = await axios.post(`api/v1/products/cart`, {
+    const response = await axios.post(`/api/v1/products/cart`, {
       userId,
       productId,
     });
@@ -15,6 +15,8 @@ export const addCart = async ({ userId, productId }) => {
     console.log(`unable to add item in cart: ${error}`);
   }
 };
+
+
 
 // function to fetch cart data
 export const fetchData = async (info) => {
@@ -45,13 +47,17 @@ export const removeItem = async ({ userId, productId }) => {
   }
 };
 
+
 const DataProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
+  const [myProductId, setMyProductId] = useState(null);
   const [cart, setCart] = useState({});
   const [cartLength, setCartLength] = useState(0);
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
   const user = JSON.parse(localStorage.getItem("user"));
+  // const [selectedProduct, setSelectedProduct] = useState(null);
   // cart data fetching information for function
+
 
   useEffect(() => {
     const getProductData = async () => {
@@ -64,6 +70,7 @@ const DataProvider = ({ children }) => {
     };
     getProductData();
   }, []);
+ 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,9 +90,11 @@ const DataProvider = ({ children }) => {
     fetchData();
   }, [isLoggedIn, setIsLoggedIn, setCart]);
 
+  
+
   return (
     <DataContext.Provider
-      value={{ products, setCart, cart, cartLength, setCartLength }}
+      value={{ products, setCart, cart, cartLength, setCartLength, myProductId, setMyProductId}}
     >
       {children}
     </DataContext.Provider>

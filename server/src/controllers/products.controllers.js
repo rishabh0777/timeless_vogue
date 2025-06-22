@@ -18,6 +18,7 @@ const getProducts = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, products, "Products fetched successfully"));
 });
 
+
 //Add item to Cart
 
 const addToCart = asyncHandler(async (req, res) => {

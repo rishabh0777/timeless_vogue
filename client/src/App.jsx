@@ -8,6 +8,7 @@ import Signup from './components/Signup'
 import About from './components/About';
 import Cart from './components/Cart';
 import ScrollToTop from './components/ScrollToTop';
+import ProductInfo from './components/ProductInfo';
 import EmailVerification from './components/EmailVerification'
 import DataProvider from './contexts/DataContext';
 import AuthProvider from './contexts/AuthContext';
@@ -23,11 +24,14 @@ const App = () => {
           <Route index element={<Dashboard />} />
           <Route path='about' element={<About />} />
           <Route path='cart' element={<Cart />} />
+          <Route path='product/:id' element={<ProductInfo />} />
+
         </Route>
         <Route path='login' element={<Login />} />
         <Route path='signup' element={<Signup />} />
         <Route path='shop' element={<Shop />} />
         <Route path='verify-email' element={<EmailVerification />} />
+
       </Routes>
     </Router>
     </DataProvider>
