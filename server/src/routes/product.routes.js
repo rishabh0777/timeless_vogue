@@ -4,6 +4,7 @@ import {
   addToCart,
   getCart,
   removeItemFromCart,
+  decreaseCartQuantity,
 } from "../controllers/products.controllers.js";
 import { verifyJWT } from "../middlewares/auth.middlewares.js";
 
@@ -15,6 +16,9 @@ router.route("/").get(getProducts);
 // secured routes
 router.route("/cart").post(verifyJWT, addToCart);
 router.route("/cart/:userId").get(verifyJWT, getCart);
+router
+  .route("/cart/decrease-quantity")
+  .put(verifyJWT, decreaseCartQuantity);
 router
   .route("/cart/:userId/:remove-cart-item")
   .delete(verifyJWT, removeItemFromCart);

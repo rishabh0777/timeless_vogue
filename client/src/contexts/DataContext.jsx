@@ -47,6 +47,19 @@ export const removeItem = async ({ userId, productId }) => {
   }
 };
 
+export const decreaseCartQuantity = async (userId, productId) => {
+    try {
+      const response = await axios.put(`/api/v1/products/cart/decrease-quantity`, {
+        userId,
+        productId,
+      });
+      setCart(response.data.data.cart);
+      setCartLength(response.data.data.cart.items.length);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
 
 const DataProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
@@ -89,6 +102,8 @@ const DataProvider = ({ children }) => {
     };
     fetchData();
   }, [isLoggedIn, setIsLoggedIn, setCart]);
+
+ 
 
   
 

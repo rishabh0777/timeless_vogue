@@ -87,33 +87,28 @@ const getCart = asyncHandler(async (req, res, next) => {
 // Remove item from cart
 const removeItemFromCart = asyncHandler(async (req, res, next) => {
   try {
-    const { userId } = req.params; // Get userId from params
-    const { productId } = req.body; // Get productId from request body
+    const { userId } = req.params;
+    const { productId } = req.body;
+
     if (!userId || !productId) {
       return next(new ApiError(400, "UserId and ProductId are required"));
     }
 
-    // Find the cart for the given user
     const cart = await Cart.findOne({ userId });
     if (!cart) {
       return next(new ApiError(404, "Cart not found"));
     }
-    // Find the index of the product inside the cart's items array
-    const itemIndex = cart.items.findIndex(
-      (item) => item.productId.toString() === String(productId._id)
-    );
 
-    console.log("Product ID to remove:", String(productId._id));
+    const itemIndex = cart.items.findIndex(
+      (item) => item.productId.toString() === productId.toString()
+    );
 
     if (itemIndex === -1) {
       return next(new ApiError(404, "Product not found in cart"));
     }
 
-    // Remove the item from the array
     cart.items.splice(itemIndex, 1);
-
     cart.markModified("items");
-    // Save the updated cart
     await cart.save();
 
     return res
@@ -125,4 +120,46 @@ const removeItemFromCart = asyncHandler(async (req, res, next) => {
   }
 });
 
-export { getProducts, addToCart, getCart, removeItemFromCart };
+
+const decreaseCartQuantity = asyncHandler(async (req, res, next) => {
+  const { userId, productId } = req.body;
+
+  if (!userId || !productId) {
+    return next(new ApiError(400, "UserId and ProductId are required"));
+  }
+
+  try {
+    const cart = await Cart.findOne({ userId });
+
+    if (!cart) {
+      return next(new ApiError(404, "Cart not found"));
+    }
+
+    const item = cart.items.find(
+      (item) => item.productId.toString() === productId
+    );
+
+    if (!item) {
+      return next(new ApiError(404, "Product not found in cart"));
+    }
+
+    if (item.quantity > 1) {
+      item.quantity -= 1;
+    } else {
+      cart.items = cart.items.filter(
+        (item) => item.productId.toString() !== productId
+      );
+    }
+
+    await cart.save();
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, cart, "Cart quantity decreased successfully"));
+  } catch (error) {
+    return next(new ApiError(500, "Internal server error"));
+  }
+}
+);
+
+export { getProducts, addToCart, getCart, removeItemFromCart, decreaseCartQuantity };
