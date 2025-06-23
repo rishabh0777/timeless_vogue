@@ -32,7 +32,7 @@ const handleLogout = async (e) => {
   e.preventDefault();
   
   try {
-    const response = await axios.post('api/v1/user/logout');
+    const response = await axios.post('/api/v1/user/logout');
     console.log(response);
     if(response?.status===200 || response?.status===201){
        

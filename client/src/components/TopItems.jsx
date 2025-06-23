@@ -2,11 +2,13 @@ import React, { useContext, useState, useEffect } from 'react';
 import { DataContext, addCart, fetchData } from '../contexts/DataContext';
 import { AuthContext } from '../contexts/AuthContext';
 import ProductCard from './ProductCard';
+import { useNavigate } from 'react-router-dom';
 
 const TopItems = () => {
   const [newArrival, setNewArrival] = useState([]);
-  const { products, setCart, setCartLength } = useContext(DataContext);
+  const { products, setCart, setCartLength, setMyProductId } = useContext(DataContext);
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+    const navigate = useNavigate();
 
   const [productId, setProductId] = useState(null);
   const user = JSON.parse(localStorage.getItem('user'));
@@ -59,6 +61,11 @@ const TopItems = () => {
     }
   }, [products]);
 
+  const handleSetMyProductId = (id) => {
+    setMyProductId(id);
+    navigate(`/product/${id}`);
+  };
+
 
 
   return (
@@ -75,6 +82,7 @@ const TopItems = () => {
                   price={`$ ${arrival.price}`}
                   btnTxt="Add to cart"
                   btnClick={() => { setProductId(arrival._id) }}
+                  onClick={() => handleSetMyProductId(arrival._id)}
                 />
               ))
             ) : (
