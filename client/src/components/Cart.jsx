@@ -141,7 +141,7 @@ const Cart = () => {
               </h2>
               <button
                 onClick={() => navigate("/checkout")}
-                className="bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700 transition-all"
+                className="bg-green-600 cursor-pointer text-white px-6 py-3 rounded hover:bg-green-700 transition-all"
               >
                 Proceed to Checkout
               </button>

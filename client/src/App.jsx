@@ -7,6 +7,7 @@ import Login from './components/Login';
 import Signup from './components/Signup'
 import About from './components/About';
 import Cart from './components/Cart';
+import Checkout from './components/Checkout'
 import ScrollToTop from './components/ScrollToTop';
 import ProductInfo from './components/ProductInfo';
 import EmailVerification from './components/EmailVerification'
@@ -25,6 +26,7 @@ const App = () => {
           <Route path='about' element={<About />} />
           <Route path='cart' element={<Cart />} />
           <Route path='product/:id' element={<ProductInfo />} />
+          <Route path='checkout' element={<Checkout />} />
 
         </Route>
         <Route path='login' element={<Login />} />

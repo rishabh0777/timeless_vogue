@@ -38,6 +38,14 @@ app.use('/api/v1/products', productRouter);
 
 // User Route
 import userRouter from './src/routes/user.routes.js';
-app.use('/api/v1/user', userRouter)
+app.use('/api/v1/user', userRouter);
+
+//Address Route
+import addressRouter from './src/routes/address.routes.js';
+app.use('/api/v1/address', addressRouter);
+
+//Downloadable Invoices 
+app.use("/invoices", express.static("invoices"));
+
 
 export default app;
