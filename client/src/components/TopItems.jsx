@@ -18,7 +18,7 @@ const TopItems = () => {
     setCart,
     setCartLength,
     isLoggedIn,
-    setIsLoggedIn,
+    setIsLoggedIn
   };
 
   const addItemToCart = async () => {

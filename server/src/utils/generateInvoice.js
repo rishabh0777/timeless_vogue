@@ -1,7 +1,7 @@
 // utils/generateInvoice.js
-import PDFDocument from "pdfkit";
-import fs from "fs";
-import path from "path";
+import PDFDocument from "pdfkit"
+import fs from "fs"
+import path from "path"
 
 export const generateInvoicePDF = ({ orderId, paymentId, address, cartItems, total }) => {
   const doc = new PDFDocument();

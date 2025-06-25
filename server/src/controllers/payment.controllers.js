@@ -15,7 +15,7 @@ export const createPaymentOrder = asyncHandler(async(req, res)=>{
   const options = {
     amount: amount*100,
     currency: "INR",
-    reciept: "reciept_"+Date.now()
+    reciept: "reciept_"+Date.now();
   };
   const order = await razorpay.orders.create(options);
 

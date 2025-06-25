@@ -1,10 +1,10 @@
 import User from "../models/user.models.js";
-import {ApiError} from '../utils/apiError.js'
+import {ApiError} from '../utils/apiError.js';
 import { ApiResponse } from "../utils/apiResponse.js";
 import asyncHandler from '../utils/asyncHandler.js';
-import sendEmail from '../utils/sendMail.js'
-import mongoose from 'mongoose'
-import jwt from 'jsonwebtoken'
+import sendEmail from '../utils/sendMail.js';
+import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
 
 const generateAccessAndRefreshTokens = async (userId)=>{
     try{

@@ -22,7 +22,7 @@ const ProductInfo = () => {
 
     const cartData = {
       userId: user?._id,
-      productId: id,
+      productId: id
     };
     try {
       const data = await addCart(cartData);

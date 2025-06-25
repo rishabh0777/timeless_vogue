@@ -21,7 +21,7 @@ const Shop = () => {
     setCart,
     setCartLength,
     isLoggedIn,
-    setIsLoggedIn,
+    setIsLoggedIn
   };
 
   const addItemToCart = async () => {

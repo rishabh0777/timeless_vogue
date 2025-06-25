@@ -10,6 +10,6 @@ class ApiResponse{
         this.message = message;
         this.statusCode = statusCode;
     }
-}
+};
 
 export { ApiResponse };

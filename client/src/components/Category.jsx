@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import Card from './Card';
 import blackBlazer from '../assets/Images/category/blackBlazer.jpg';
 import casualSweatShirt from '../assets/Images/category/casualSweatShirt.jpg';

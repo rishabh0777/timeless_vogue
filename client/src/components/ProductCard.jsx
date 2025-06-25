@@ -16,7 +16,7 @@ const ProductCard = ({ className, item, price, btnTxt, onClick, btnClick }) => {
     gsap.to(categoryInformationRef.current, {
       height: "0%", // Shrinks back
       duration: 0.7,
-      ease: "power2.inOut",
+      ease: "power2.inOut"
     });
   };
 

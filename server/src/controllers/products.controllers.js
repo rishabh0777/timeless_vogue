@@ -10,7 +10,7 @@ const getProducts = asyncHandler(async (req, res) => {
   if (!products) {
     throw new ApiError(
       404,
-      "Sorry we are unable to fetch Products at the moment please check your connection and try again"
+      "Sorry we are unable to fetch Products at the moment please check your connection and try again",
     );
   }
   return res

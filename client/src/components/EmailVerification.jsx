@@ -30,7 +30,7 @@ const EmailVerification = () => {
     } catch (error) {
       console.error('Error verifying email:', error);
       alert('An error occurred while verifying your email. Please try again.');
-      navigate('/Login')
+      navigate('/Login');
     }
   };
 

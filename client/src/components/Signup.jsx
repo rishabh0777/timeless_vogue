@@ -28,7 +28,7 @@ const Signup = () => {
         alert('Check your mail box for verification email')
         navigate('/login')
       }else{
-        alert('Something went wrong!')
+        alert('Something went wrong!');
       }
     } catch (error) {
       console.error(error);

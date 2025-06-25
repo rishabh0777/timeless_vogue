@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import Cart from './cart.models.js';
-import jwt from 'jsonwebtoken'
-import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 const userSchema = new mongoose.Schema({
     fullname:{

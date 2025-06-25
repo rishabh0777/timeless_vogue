@@ -12,7 +12,7 @@ export const addCart = async ({ userId, productId }) => {
     });
     return response.data;
   } catch (error) {
-    console.log(`unable to add item in cart: ${error}`);
+    console.log(`unable to add item in cart: ${error}`)
   }
 };
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom'
 
 const Footer = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   return (
     <div className='w-full h-[25vh] bg-white/10 backdrop-blur-md flex flex-col border-t-2 border-zinc-500'>
       

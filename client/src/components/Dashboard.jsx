@@ -2,7 +2,7 @@ import React from 'react';
 import heroPoster from '../assets/Images/Poster/heroPoster.jpg';
 import Category from './Category';
 import TopItems from './TopItems';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 
 
 const Dashboard = () => {

@@ -16,7 +16,7 @@ const Login = () => {
     e.preventDefault();
     const userData = {
       username,
-      password
+      password,
     }
     try {
       const response = await axios.post('api/v1/user/login', userData);

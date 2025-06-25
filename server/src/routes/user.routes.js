@@ -1,6 +1,6 @@
 import { register, verifyEmail, login, logout } from '../controllers/user.controllers.js';
 import { Router } from 'express';
-import { verifyJWT } from '../middlewares/auth.middlewares.js'
+import { verifyJWT } from '../middlewares/auth.middlewares.js';
 
 const router = Router();
 

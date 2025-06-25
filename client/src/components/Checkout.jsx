@@ -12,12 +12,12 @@ const Checkout = () => {
     state: "",
     pincode: "",
     country: "",
-  });
+  }); 
 
   const totalAmount = 1499; // Replace with real cart total
   const userId = "user-id-from-auth"; // Replace with real logged-in user ID
   const cartItems = [
-    { name: "Premium Shirt", quantity: 2, price: 599 },
+    { name: "Premium Shirt", quantity: 2, price: 598 },
     { name: "Classic Jeans", quantity: 1, price: 699 },
   ];
 
