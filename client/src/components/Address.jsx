@@ -10,7 +10,6 @@ const Address = () => {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const [formData, setFormData] = useState({
-    user,
     name: "",
     phone: "",
     addressLine: "",
