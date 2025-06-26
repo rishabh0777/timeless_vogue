@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useState, useEffect } from "react";
 import { DataContext, removeItem, fetchData, addCart } from "../contexts/DataContext";
 import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +10,7 @@ const Cart = () => {
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
   const user = JSON.parse(localStorage.getItem("user"));
   const [loading, setLoading] = useState(false);
+  const [addresses, setAddresses] = useState([]);
 
   const info = {
     userId: user?._id,
@@ -64,6 +65,21 @@ const Cart = () => {
     0
   );
 
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      try {
+        const res = await axios.get(`/api/v1/address/${user._id}`);
+        setAddresses(res.data.data || []);
+      } catch (error) {
+        console.error("Failed to fetch addresses", error);
+      }
+    };
+
+    if (user?._id) {
+      fetchAddresses();
+    }
+  }, [user?._id]);
+
   return (
     <div className="w-full min-h-screen pt-[10vh] px-4 md:px-12">
       <h1 className="text-3xl md:text-4xl font-bold text-center mb-8">CHECKOUT</h1>
@@ -105,9 +121,7 @@ const Cart = () => {
                   </div>
                 </div>
 
-                <div className="text-center text-sm">
-                  ${item.productId.price}
-                </div>
+                <div className="text-center text-sm">${item.productId.price}</div>
 
                 <div className="flex justify-center items-center gap-2">
                   <button
@@ -134,6 +148,56 @@ const Cart = () => {
             {loading && (
               <p className="text-center text-sm text-zinc-500 mt-4">Updating cart...</p>
             )}
+
+            {/* Red Section — Address Selector */}
+            <div className="w-full min-h-[40vh] bg-red-500 px-4 md:px-12 py-6 mt-10 rounded-md">
+              <h2 className="text-white text-xl font-semibold mb-4">Select Address</h2>
+
+              <div className="w-full max-w-2xl bg-white p-4 rounded space-y-4 shadow">
+                {addresses.length === 0 ? (
+                  <div className="flex justify-between items-center">
+                    <p className="text-zinc-700">No address found.</p>
+                    <button
+                      onClick={() => navigate("/address")}
+                      className="px-4 py-2 bg-black text-white rounded"
+                    >
+                      Add Address
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    {addresses.map((addr) => (
+                      <div
+                        key={addr._id}
+                        className="border rounded p-3 flex justify-between items-start"
+                      >
+                        <div className="text-sm text-zinc-800">
+                          <p><strong>{addr.name}</strong> - {addr.phone}</p>
+                          <p>{addr.addressLine}, {addr.city}</p>
+                          <p>{addr.state} - {addr.pincode}</p>
+                          <p>{addr.country}</p>
+                        </div>
+                        <button
+                          onClick={() => navigate(`/address?edit=${addr._id}`)}
+                          className="text-blue-600 text-sm underline"
+                        >
+                          Edit
+                        </button>
+                      </div>
+                    ))}
+
+                    {addresses.length < 3 && (
+                      <button
+                        onClick={() => navigate("/address")}
+                        className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                      >
+                        Add Address
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
 
             <div className="mt-10 flex flex-col items-center md:items-end gap-4">
               <h2 className="text-xl md:text-2xl font-semibold">

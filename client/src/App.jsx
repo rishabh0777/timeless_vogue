@@ -7,17 +7,20 @@ import Login from './components/Login';
 import Signup from './components/Signup'
 import About from './components/About';
 import Cart from './components/Cart';
+import Address from './components/Address';
 import Checkout from './components/Checkout'
 import ScrollToTop from './components/ScrollToTop';
 import ProductInfo from './components/ProductInfo';
 import EmailVerification from './components/EmailVerification'
 import DataProvider from './contexts/DataContext';
 import AuthProvider from './contexts/AuthContext';
+import AddressProvider from './contexts/AddressContext'
 
 const App = () => {
   return (
     <AuthProvider>
     <DataProvider value={{products: []}}>
+    <AddressProvider>
     <Router>
       <ScrollToTop />
       <Routes>
@@ -27,6 +30,7 @@ const App = () => {
           <Route path='cart' element={<Cart />} />
           <Route path='product/:id' element={<ProductInfo />} />
           <Route path='checkout' element={<Checkout />} />
+          <Route path='address' element={<Address />} />
 
         </Route>
         <Route path='login' element={<Login />} />
@@ -36,6 +40,7 @@ const App = () => {
 
       </Routes>
     </Router>
+    </AddressProvider>
     </DataProvider>
     </AuthProvider>
 

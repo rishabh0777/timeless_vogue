@@ -99,11 +99,12 @@ export const deleteAddress = asyncHandler(async (req, res)=>{
 
 //Get Address -->
 export const getAddress = asyncHandler(async (req, res)=>{
-  const address = await Address.find({});
+  const userId = req.user?.userId
+  const address = await Address.find({user: userId});
   if(!address){
-    throw new ApiError(404, "Address not find");
+    throw new ApiError(404, "Address not found");
   }
   return res
   .status(200)
-  .json(new ApiResponse(200, address, "Address Fetched Successfully"))
+  .json(new ApiResponse(200, address, "Address Fetched Successfully"));
 });
