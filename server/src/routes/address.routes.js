@@ -13,10 +13,10 @@ import { verifyJWT } from "../middlewares/auth.middlewares.js";
 const router = Router();
 
 //Secured routes
-router.route("/address/get").get(verifyJWT, getAddress);
-router.route("/address/add").post(verifyJWT, addAddress);
-router.route("/address/update/:id").put(verifyJWT, updateAddress);
-router.route("/address/delete/:id").delete(verifyJWT, deleteAddress);
+router.route("/get").get(verifyJWT, getAddress);
+router.route("/add").post(verifyJWT, addAddress);
+router.route("/update/:id").put(verifyJWT, updateAddress);
+router.route("/delete/:id").delete(verifyJWT, deleteAddress);
 
 export default router;
 

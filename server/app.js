@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-dotenv.config
+dotenv.config()
 import cors from 'cors';
 import express from 'express';
 import cookieParser from 'cookie-parser';
@@ -11,7 +11,6 @@ import User from './src/models/user.models.js';
 // Connect to database
 await connectDB();
 const app = express();
-app.use(cors());
 
 app.use(cors({
   origin: 'https://glorious-space-sniffle-q5r6w755g4qf4gg7-5173.app.github.dev',

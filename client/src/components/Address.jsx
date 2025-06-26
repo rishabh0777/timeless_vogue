@@ -26,6 +26,7 @@ const Address = () => {
  
 
   const handleChange = (e) => {
+    e.preventDefault()
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -33,14 +34,30 @@ const Address = () => {
     }));
   };
 
-  const addNewAddress = async ()=>{
-    if(!user){
-      console.log('User not found!');
-      return;
-    }
-    const myAddress = await addAddress(formData);
-    console.log(myAddress);
+ const addNewAddress = async (e) => {
+  e.preventDefault(); 
+
+  if (!user) {
+    console.log("User not found!");
+    return;
   }
+
+  try {
+    const myAddress = await addAddress(formData);
+    if (myAddress?.data?.statusCode === 200) {
+      setSuccess("Address saved successfully!");
+      setError("");
+      navigate("/cart");
+    } else {
+      setError("Failed to save address.");
+      setSuccess("");
+    }
+  } catch (error) {
+    setError("Something went wrong while saving address.");
+    console.error(error);
+  }
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-10 bg-zinc-100">
@@ -52,7 +69,7 @@ const Address = () => {
         {error && <p className="text-red-500 mb-4">{error}</p>}
         {success && <p className="text-green-600 mb-4">{success}</p>}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={addNewAddress} className="space-y-4">
           <div>
             <label className="block font-medium mb-1">Name</label>
             <input
@@ -140,7 +157,6 @@ const Address = () => {
           </div>
 
           <button
-            onClick={editId?update:addNewAddress}
             type="submit"
             className="w-full bg-green-600 text-white py-3 rounded hover:bg-green-700 transition"
           >

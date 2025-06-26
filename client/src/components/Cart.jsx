@@ -1,11 +1,15 @@
 import React, { useContext, useState, useEffect } from "react";
-import { DataContext, removeItem, fetchData, addCart } from "../contexts/DataContext";
-import { AuthContext } from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom"; // ✅ Added here
 import axios from "axios";
+import { DataContext, removeItem, fetchData, addCart } from "../contexts/DataContext";
+import { fetchAddress } from "../contexts/AddressContext";
+import { AuthContext } from "../contexts/AuthContext";
 
 const Cart = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams(); // ✅ Hook added
+  const editId = searchParams.get("edit");  // ✅ Now this will work
+
   const { cart, setCart, setCartLength } = useContext(DataContext);
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
   const user = JSON.parse(localStorage.getItem("user"));
@@ -65,20 +69,22 @@ const Cart = () => {
     0
   );
 
-  useEffect(() => {
-    const fetchAddresses = async () => {
+useEffect(() => {
+  const fetchEditData = async () => {
+    if (editId) {
       try {
-        const res = await axios.get(`/api/v1/address/${user._id}`);
-        setAddresses(res.data.data || []);
-      } catch (error) {
-        console.error("Failed to fetch addresses", error);
+        const { data } = await axios.get(`/api/v1/address/get`);
+        const targetAddress = data.data.find(addr => addr._id === editId);
+        if (targetAddress) setFormData(targetAddress);
+      } catch (err) {
+        setError("Unable to fetch address to edit.");
       }
-    };
-
-    if (user?._id) {
-      fetchAddresses();
     }
-  }, [user?._id]);
+  };
+
+  fetchEditData();
+}, [editId]);
+
 
   return (
     <div className="w-full min-h-screen pt-[10vh] px-4 md:px-12">
