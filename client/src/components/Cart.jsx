@@ -4,33 +4,20 @@ import axios from "axios";
 import { DataContext, removeItem, fetchData, addCart } from "../contexts/DataContext";
 import { fetchAddress, removeAddress } from "../contexts/AddressContext";
 import { AuthContext } from "../contexts/AuthContext";
-import { AddressContext } from "../contexts/AddressContext"
-import Payment from './Payment'
+import { AddressContext } from "../contexts/AddressContext";
+import Payment from './Payment';
+import CartSkeleton from "../loaderComponents/CartSkeleton"; // ✅ Skeleton loader
 
 const Cart = () => {
   const navigate = useNavigate();
-  const { cart, setCart, setCartLength} = useContext(DataContext);
+  const { cart, setCart, setCartLength } = useContext(DataContext);
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
-  const {addresses, setAddresses, selectedAddress, setSelectedAddress} = useContext(AddressContext)
+  const { addresses, setAddresses, selectedAddress, setSelectedAddress } = useContext(AddressContext);
   const user = JSON.parse(localStorage.getItem("user"));
 
   const [loading, setLoading] = useState(false);
   const [addressId, setAddressId] = useState("");
-
-  const removeOneAddress = async (id)=>{
-    if (!id) return;
-    setAddressId(id);
-    try{ 
-      await removeAddress(id)
-      fetchAddresses();
-
-    }catch(error){
-      console.log(error)
-    }
-    setLoading(false)
-
-  }
-
+  const [isLoading, setIsLoading] = useState(true); // ✅ Skeleton state
 
   const info = {
     userId: user?._id,
@@ -38,6 +25,37 @@ const Cart = () => {
     setCartLength,
     isLoggedIn,
     setIsLoggedIn,
+  };
+
+  const fetchAddresses = async () => {
+    if (user) {
+      const addr = await fetchAddress();
+      if (Array.isArray(addr.data)) {
+        setAddresses(addr.data);
+      } else {
+        setAddresses([]);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const fetchInitial = async () => {
+      await Promise.all([fetchData(info), fetchAddresses()]);
+    };
+    fetchInitial();
+    setIsLoading(false)
+  }, []);
+
+  const removeOneAddress = async (id) => {
+    if (!id) return;
+    setAddressId(id);
+    try {
+      await removeAddress(id);
+      fetchAddresses();
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
   };
 
   const remove = async (id) => {
@@ -84,24 +102,7 @@ const Cart = () => {
     0
   );
 
-
-
-  const fetchAddresses = async () => {
-    if (user) {
-      const addr = await fetchAddress();
-      if (Array.isArray(addr.data)) {
-        setAddresses(addr.data);
-      } else {
-        setAddresses([]);
-      }
-    }
-  };
-
-  useEffect(() => {
-    fetchAddresses();
-  }, []);
-
-  const selectedAddr = addresses.find((a) => a._id === selectedAddress);
+  if (isLoading) return <CartSkeleton />;
 
   return (
     <div className="w-full min-h-[200vh] pt-[10vh] px-4 md:px-12">
@@ -131,14 +132,14 @@ const Cart = () => {
                   </button>
                 </div>
               </div>
-              <div className="text-center text-sm">${item.productId.price}</div>
+              <div className="text-center text-sm">₹{item.productId.price}</div>
               <div className="flex justify-center items-center gap-2">
                 <button onClick={() => decreaseQuantity(item.productId._id, item.quantity)} className="px-2 py-1 bg-zinc-200 rounded">-</button>
                 <span>{item.quantity}</span>
                 <button onClick={() => increaseQuantity(item.productId._id)} className="px-2 py-1 bg-zinc-200 rounded">+</button>
               </div>
               <div className="text-center font-medium text-sm">
-                ${(item.productId.price * item.quantity).toFixed(2)}
+                ₹{(item.productId.price * item.quantity).toFixed(2)}
               </div>
             </div>
           ))}
@@ -165,20 +166,20 @@ const Cart = () => {
                   <p className="text-sm text-zinc-700">{addr.country}</p>
                   <div className="flex justify-between items-center px-4">
                     <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/address?edit=${addr._id}`);
-                    }}
-                    className="text-blue-600 text-sm cursor-pointer mt-2"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={()=> removeOneAddress(addr._id)}
-                    className="text-red-600 text-sm cursor-pointer mt-2"
-                  >
-                    Remove
-                  </button>
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/address?edit=${addr._id}`);
+                      }}
+                      className="text-blue-600 text-sm cursor-pointer mt-2"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => removeOneAddress(addr._id)}
+                      className="text-red-600 text-sm cursor-pointer mt-2"
+                    >
+                      Remove
+                    </button>
                   </div>
                 </div>
               ))}
@@ -192,10 +193,11 @@ const Cart = () => {
               )}
             </div>
           </div>
-          <div className="w-full ">
+
+          {/* ✅ PAYMENT SECTION */}
+          <div className="w-full mt-10">
             <Payment />
           </div>
-          
         </>
       ) : (
         <div className="text-center mt-12">

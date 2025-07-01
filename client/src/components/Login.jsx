@@ -1,29 +1,36 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useInput } from '../contexts/AuthContext';
+import { useInput, AuthContext } from '../contexts/AuthContext';
 import axios from 'axios';
-import { AuthContext } from '../contexts/AuthContext';
+import LoginSkeleton from '../loaderComponents/LoginSkeleton';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext); 
-
+  const { setIsLoggedIn } = useContext(AuthContext); 
   const [username, handleUsernameChange] = useInput("");
   const [password, handlePasswordChange] = useInput("");
 
+  const [loading, setLoading] = useState(false);     // Login submission loader
+  const [isLoading, setIsLoading] = useState(true);  // Page skeleton loader
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800); // Delay for effect (adjust as needed)
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleLogin = async (e) => {
     e.preventDefault();
-    const userData = { username, password };
- 
+    setLoading(true);
+
     try {
-      const response = await axios.post('/api/v1/user/login', userData);
+      const response = await axios.post('/api/v1/user/login', { username, password });
       if (response?.status === 200 || response?.status === 201) {
         const { accessToken, refreshToken, user } = response.data.data;
-
-        localStorage.setItem("accessToken", accessToken); // Make sure to use this key later
+        localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
         localStorage.setItem("user", JSON.stringify(user));
-
         setIsLoggedIn(true);
         navigate('/');
       } else {
@@ -32,8 +39,13 @@ const Login = () => {
     } catch (error) {
       console.error(error);
       alert(error.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
+
+  // ✅ Show skeleton only when page is first loading
+  if (isLoading) return <LoginSkeleton />;
 
   return (
     <div className="relative authBg w-full h-screen flex justify-center items-center">
@@ -44,30 +56,32 @@ const Login = () => {
         <div className="h-full w-1/2 flex flex-col items-center justify-center px-5 py-6">
           <div className="w-[80%] flex justify-between mb-[5vh]">
             <h1 className="font-bold text-[1.3vw]">Log in</h1>
-            <p className="text-[1.2vw]">Don't have an account? 
+            <p className="text-[1.2vw]">
+              Don't have an account? 
               <span onClick={() => navigate('/Signup')} className="font-bold underline cursor-pointer"> Signup</span>
             </p>
           </div>
-          <form 
-            className="w-[80%] min-h-[30vh] flex flex-col items-center"
-            onSubmit={handleLogin}
-          >
-            <input 
-              className="bg-white text-zinc-800 py-2 px-4 w-[80%] mb-[4vh] rounded-md shadow-lg border-2 border-zinc-100 outline-none"
-              name="username" 
+          <form className="w-[80%] min-h-[30vh] flex flex-col items-center" onSubmit={handleLogin}>
+            <input
+              className="bg-white text-zinc-800 py-2 px-4 w-[80%] mb-[4vh] rounded-md shadow-lg outline-none"
+              name="username" type="text" placeholder="Enter your email or username"
               onChange={handleUsernameChange}
-              type="text" 
-              placeholder="Enter your email or username"
+              disabled={loading}
             />
-            <input 
-              className="bg-white text-zinc-800 py-2 px-4 w-[80%] mb-[4vh] rounded-md shadow-lg border-2 border-zinc-100 outline-none"
-              name="password" 
-              type="password"
-              onChange={handlePasswordChange} 
-              placeholder="Enter your password"
+            <input
+              className="bg-white text-zinc-800 py-2 px-4 w-[80%] mb-[4vh] rounded-md shadow-lg outline-none"
+              name="password" type="password" placeholder="Enter your password"
+              onChange={handlePasswordChange}
+              disabled={loading}
             />
-            <button className="bg-zinc-900 text-white font-bold w-[40%] py-2 rounded-full mb-[4vh] cursor-pointer">
-              Log in
+            <button
+              type="submit"
+              className={`bg-zinc-900 text-white font-bold w-[40%] py-2 rounded-full mb-[4vh] ${
+                loading ? 'opacity-70 cursor-not-allowed' : ''
+              }`}
+              disabled={loading}
+            >
+              {loading ? 'Logging in...' : 'Log in'}
             </button>
             <div className="w-full flex justify-center items-center mb-[4vh]">
               <div className="w-[30%] h-[0.2vh] bg-zinc-700"></div>

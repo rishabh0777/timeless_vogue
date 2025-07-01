@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
 import ProductCard from "./ProductCard";
+import ProductCardSkeleton from "../loaderComponents/ProductCardSkeleton";
 import Navbar from "./Navbar";
 import { DataContext, addCart, fetchData } from "../contexts/DataContext";
 import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import ShopSkeleton from "../loaderComponents/ShopSkeleton";
 
 const Shop = () => {
   const { products, setCart, setCartLength, setMyProductId } = useContext(DataContext);
@@ -13,6 +15,7 @@ const Shop = () => {
   const [myProducts, setMyProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [productId, setProductId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -22,7 +25,7 @@ const Shop = () => {
     setCartLength,
     isLoggedIn,
     setIsLoggedIn
-  }; 
+  };
 
   const addItemToCart = async () => {
     if (!user?._id || !productId) {
@@ -65,6 +68,11 @@ const Shop = () => {
               )
             );
       setMyProducts(filteredProducts);
+
+      // simulate loading
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1200);
     }
   }, [products, selectedCategory]);
 
@@ -76,7 +84,11 @@ const Shop = () => {
   return (
     <>
       <Navbar />
+      {isLoading ? (
+  <ShopSkeleton />
+) : (
       <div className="w-full min-h-[70svh] pt-[10vh] relative">
+        {/* Header and category filters */}
         <div className="w-full h-[25vh] fixed z-500 bg-white py-4 text-center text-[4vw]">
           <h1>The Wardrobe</h1>
           <div className="w-full flex justify-between px-12">
@@ -84,7 +96,10 @@ const Shop = () => {
               {["All", "Top Wear", "Bottom Wear", "Winter Wear", "Summer", "Informal", "Formal"].map((category) => (
                 <p
                   key={category}
-                  onClick={() => setSelectedCategory(category)}
+                  onClick={() => {
+                    setSelectedCategory(category);
+                    setIsLoading(true); // re-trigger loader on filter change
+                  }}
                   className={`cursor-pointer ${selectedCategory === category ? "font-bold" : ""}`}
                 >
                   {category.toUpperCase()}
@@ -101,20 +116,26 @@ const Shop = () => {
           </div>
         </div>
 
+        {/* Products or Skeletons */}
         <div className="w-full absolute top-[30vh] overflow-scroll min-h-[100vh] py-10 px-12 grid grid-cols-3 gap-2 justify-items-center shadow-lg z-50">
-          {myProducts &&
-            myProducts.map((product) => (
-              <ProductCard
-                key={product._id}
-                item={product}
-                btnTxt={"Add to Cart"}
-                price={`$ ${product.price}`}
-                onClick={() => handleSetMyProductId(product._id)}
-                btnClick={() => setProductId(product._id)}
-              />
-            ))}
+          {isLoading
+            ? Array.from({ length: 6 }).map((_, i) => <ProductCardSkeleton key={i} />)
+            : myProducts.length > 0
+              ? myProducts.map((product) => (
+                  <ProductCard
+                    key={product._id}
+                    item={product}
+                    btnTxt={"Add to Cart"}
+                    price={`$ ${product.price}`}
+                    onClick={() => handleSetMyProductId(product._id)}
+                    btnClick={() => setProductId(product._id)}
+                  />
+                ))
+              : <p className="col-span-3">No products found in this category.</p>
+          }
         </div>
       </div>
+      )}
     </>
   );
 };
