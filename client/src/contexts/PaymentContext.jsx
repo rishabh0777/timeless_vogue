@@ -11,7 +11,8 @@ export const PaymentProvider = ({ children }) => {
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentError, setPaymentError] = useState(null);
   const [invoiceUrl, setInvoiceUrl] = useState("");
-  // const { placeOrder } = useOrder();
+  const { placeOrder } = useOrder();
+
 
   const getAuthHeader = () => ({
     headers: {

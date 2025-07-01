@@ -24,8 +24,8 @@ const App = () => {
     <AuthProvider>
     <DataProvider value={{products: []}}>
     <AddressProvider>
-    <PaymentProvider>
     <OrderProvider>
+    <PaymentProvider>
     <Router>
       <ScrollToTop />
       <Routes>
@@ -46,8 +46,8 @@ const App = () => {
 
       </Routes>
     </Router>
-    </OrderProvider>
     </PaymentProvider>
+    </OrderProvider>
     </AddressProvider>
     </DataProvider>
     </AuthProvider>
