@@ -67,6 +67,7 @@ const handleLogout = async (e) => {
           <li onClick={()=>navigate('/')} className='cursor-pointer'>Home</li>
           <li onClick={()=>navigate('/shop')} className='cursor-pointer'>Wardrobe</li>
           <li onClick={()=>navigate('/about')} className='cursor-pointer'>About</li>
+          <li onClick={()=>navigate('/order')} className='cursor-pointer'>Order</li>
         </ul>
         {/* Search bar */}
         <div className='flex gap-[3vw] relative '>

@@ -109,7 +109,7 @@ const DataProvider = ({ children }) => {
 
   return (
     <DataContext.Provider
-      value={{ products, setCart, cart, cartLength, setCartLength, myProductId, setMyProductId}}
+      value={{ products, setCart, cart, cartLength, setCartLength, myProductId}}
     >
       {children}
     </DataContext.Provider>

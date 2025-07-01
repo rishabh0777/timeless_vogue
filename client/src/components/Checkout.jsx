@@ -85,8 +85,9 @@ const Checkout = () => {
 
     const { id: order_id, currency, amount } = data.data;
 
+    const keyRes = await axios.get("/api/v1/payment/get-key");
     const options = {
-      key: "RAZORPAY_KEY_ID", // Replace with your key
+      key: keyRes, // Replace with your key
       amount,
       currency,
       name: "Timeless Vogue",

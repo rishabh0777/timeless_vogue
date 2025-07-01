@@ -1,20 +1,36 @@
 import React, { useContext, useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom"; // ✅ Added here
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { DataContext, removeItem, fetchData, addCart } from "../contexts/DataContext";
-import { fetchAddress } from "../contexts/AddressContext";
+import { fetchAddress, removeAddress } from "../contexts/AddressContext";
 import { AuthContext } from "../contexts/AuthContext";
+import { AddressContext } from "../contexts/AddressContext"
+import Payment from './Payment'
 
 const Cart = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams(); // ✅ Hook added
-  const editId = searchParams.get("edit");  // ✅ Now this will work
-
-  const { cart, setCart, setCartLength } = useContext(DataContext);
+  const { cart, setCart, setCartLength} = useContext(DataContext);
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+  const {addresses, setAddresses, selectedAddress, setSelectedAddress} = useContext(AddressContext)
   const user = JSON.parse(localStorage.getItem("user"));
+
   const [loading, setLoading] = useState(false);
-  const [addresses, setAddresses] = useState([]);
+  const [addressId, setAddressId] = useState("");
+
+  const removeOneAddress = async (id)=>{
+    if (!id) return;
+    setAddressId(id);
+    try{
+      await removeAddress(id)
+      fetchAddresses();
+
+    }catch(error){
+      console.log(error)
+    }
+    setLoading(false)
+
+  }
+
 
   const info = {
     userId: user?._id,
@@ -50,7 +66,6 @@ const Cart = () => {
       await remove(id);
       return;
     }
-
     setLoading(true);
     try {
       await axios.put(`/api/v1/products/cart/decrease-quantity`, {
@@ -69,165 +84,129 @@ const Cart = () => {
     0
   );
 
-useEffect(() => {
-  const fetchEditData = async () => {
-    if (editId) {
-      try {
-        const { data } = await axios.get(`/api/v1/address/get`);
-        const targetAddress = data.data.find(addr => addr._id === editId);
-        if (targetAddress) setFormData(targetAddress);
-      } catch (err) {
-        setError("Unable to fetch address to edit.");
+
+
+  const fetchAddresses = async () => {
+    if (user) {
+      const addr = await fetchAddress();
+      if (Array.isArray(addr.data)) {
+        setAddresses(addr.data);
+      } else {
+        setAddresses([]);
       }
     }
   };
 
-  fetchEditData();
-}, [editId]);
+  useEffect(() => {
+    fetchAddresses();
+  }, []);
 
+  const selectedAddr = addresses.find((a) => a._id === selectedAddress);
 
   return (
-    <div className="w-full min-h-screen pt-[10vh] px-4 md:px-12">
+    <div className="w-full min-h-[200vh] pt-[10vh] px-4 md:px-12">
       <h1 className="text-3xl md:text-4xl font-bold text-center mb-8">CHECKOUT</h1>
 
-      {user ? (
-        cart?.items?.length > 0 ? (
-          <>
-            <div className="hidden md:grid grid-cols-5 font-semibold text-sm text-zinc-600 pb-3">
-              <p className="col-span-2">Product</p>
-              <p className="text-center">Price</p>
-              <p className="text-center">Quantity</p>
-              <p className="text-center">Subtotal</p>
-            </div>
-
-            {cart.items.map((item) => (
-              <div
-                key={item.productId._id}
-                className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center py-6 border-t border-zinc-200"
-              >
-                <div className="col-span-2 flex gap-4 items-center">
-                  <div className="w-20 h-20 rounded bg-zinc-100 overflow-hidden shrink-0">
-                    <img
-                      src={item.productId.image}
-                      alt={item.productId.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <h2 className="font-bold text-base">{item.productId.title}</h2>
-                    <p className="text-xs text-zinc-600 line-clamp-2">
-                      {item.productId.description}
-                    </p>
-                    <button
-                      onClick={() => remove(item.productId._id)}
-                      className="text-red-500 text-xs mt-1 w-fit"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                </div>
-
-                <div className="text-center text-sm">${item.productId.price}</div>
-
-                <div className="flex justify-center items-center gap-2">
-                  <button
-                    onClick={() => decreaseQuantity(item.productId._id, item.quantity)}
-                    className="px-2 py-1 bg-zinc-200 rounded"
-                  >
-                    -
-                  </button>
-                  <span>{item.quantity}</span>
-                  <button
-                    onClick={() => increaseQuantity(item.productId._id)}
-                    className="px-2 py-1 bg-zinc-200 rounded"
-                  >
-                    +
-                  </button>
-                </div>
-
-                <div className="text-center font-medium text-sm">
-                  ${(item.productId.price * item.quantity).toFixed(2)}
-                </div>
-              </div>
-            ))}
-
-            {loading && (
-              <p className="text-center text-sm text-zinc-500 mt-4">Updating cart...</p>
-            )}
-
-            {/* Red Section — Address Selector */}
-            <div className="w-full min-h-[40vh] bg-red-500 px-4 md:px-12 py-6 mt-10 rounded-md">
-              <h2 className="text-white text-xl font-semibold mb-4">Select Address</h2>
-
-              <div className="w-full max-w-2xl bg-white p-4 rounded space-y-4 shadow">
-                {addresses.length === 0 ? (
-                  <div className="flex justify-between items-center">
-                    <p className="text-zinc-700">No address found.</p>
-                    <button
-                      onClick={() => navigate("/address")}
-                      className="px-4 py-2 bg-black text-white rounded"
-                    >
-                      Add Address
-                    </button>
-                  </div>
-                ) : (
-                  <>
-                    {addresses.map((addr) => (
-                      <div
-                        key={addr._id}
-                        className="border rounded p-3 flex justify-between items-start"
-                      >
-                        <div className="text-sm text-zinc-800">
-                          <p><strong>{addr.name}</strong> - {addr.phone}</p>
-                          <p>{addr.addressLine}, {addr.city}</p>
-                          <p>{addr.state} - {addr.pincode}</p>
-                          <p>{addr.country}</p>
-                        </div>
-                        <button
-                          onClick={() => navigate(`/address?edit=${addr._id}`)}
-                          className="text-blue-600 text-sm underline"
-                        >
-                          Edit
-                        </button>
-                      </div>
-                    ))}
-
-                    {addresses.length < 3 && (
-                      <button
-                        onClick={() => navigate("/address")}
-                        className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                      >
-                        Add Address
-                      </button>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
-
-            <div className="mt-10 flex flex-col items-center md:items-end gap-4">
-              <h2 className="text-xl md:text-2xl font-semibold">
-                Grand Total: ${totalPrice.toFixed(2)}
-              </h2>
-              <button
-                onClick={() => navigate("/checkout")}
-                className="bg-green-600 cursor-pointer text-white px-6 py-3 rounded hover:bg-green-700 transition-all"
-              >
-                Proceed to Checkout
-              </button>
-            </div>
-          </>
-        ) : (
-          <div className="text-center mt-12">
-            <h1 className="text-2xl md:text-3xl">Your cart is empty</h1>
-            <button
-              onClick={() => navigate("/shop")}
-              className="mt-4 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              Shop Now
-            </button>
+      {user ? cart?.items?.length > 0 ? (
+        <>
+          {/* ✅ CART SECTION */}
+          <div className="hidden md:grid grid-cols-5 font-semibold text-sm text-zinc-600 pb-3">
+            <p className="col-span-2">Product</p>
+            <p className="text-center">Price</p>
+            <p className="text-center">Quantity</p>
+            <p className="text-center">Subtotal</p>
           </div>
-        )
+
+          {cart.items.map((item) => (
+            <div key={item.productId._id} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center py-6 border-t border-zinc-200">
+              <div className="col-span-2 flex gap-4 items-center">
+                <div className="w-20 h-20 bg-zinc-100 rounded overflow-hidden">
+                  <img src={item.productId.image} alt={item.productId.title} className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <h2 className="font-bold text-base">{item.productId.title}</h2>
+                  <p className="text-xs text-zinc-600 line-clamp-2">{item.productId.description}</p>
+                  <button onClick={() => remove(item.productId._id)} className="text-red-500 text-xs mt-1">
+                    Remove
+                  </button>
+                </div>
+              </div>
+              <div className="text-center text-sm">${item.productId.price}</div>
+              <div className="flex justify-center items-center gap-2">
+                <button onClick={() => decreaseQuantity(item.productId._id, item.quantity)} className="px-2 py-1 bg-zinc-200 rounded">-</button>
+                <span>{item.quantity}</span>
+                <button onClick={() => increaseQuantity(item.productId._id)} className="px-2 py-1 bg-zinc-200 rounded">+</button>
+              </div>
+              <div className="text-center font-medium text-sm">
+                ${(item.productId.price * item.quantity).toFixed(2)}
+              </div>
+            </div>
+          ))}
+
+          {loading && <p className="text-center text-sm text-zinc-500 mt-4">Updating cart...</p>}
+
+          {/* ✅ ADDRESS SECTION */}
+          <div className="mt-10">
+            <h2 className="text-xl font-semibold mb-4">Choose Delivery Address</h2>
+            <div className="flex flex-wrap gap-5 justify-center">
+              {addresses.map((addr) => (
+                <div
+                  key={addr._id}
+                  onClick={() => setSelectedAddress(addr._id)}
+                  className={`cursor-pointer w-[30%] min-w-[250px] border p-4 rounded-lg transition-all duration-200 ${
+                    selectedAddress === addr._id
+                      ? "border-green-600 bg-green-50 shadow"
+                      : "border-zinc-200 hover:border-zinc-400"
+                  }`}
+                >
+                  <p className="font-semibold text-zinc-800">{addr.name} - {addr.phone}</p>
+                  <p className="text-sm text-zinc-700">{addr.addressLine}, {addr.city}</p>
+                  <p className="text-sm text-zinc-700">{addr.state} - {addr.pincode}</p>
+                  <p className="text-sm text-zinc-700">{addr.country}</p>
+                  <div className="flex justify-between items-center px-4">
+                    <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/address?edit=${addr._id}`);
+                    }}
+                    className="text-blue-600 text-sm cursor-pointer mt-2"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={()=> removeOneAddress(addr._id)}
+                    className="text-red-600 text-sm cursor-pointer mt-2"
+                  >
+                    Remove
+                  </button>
+                  </div>
+                </div>
+              ))}
+              {addresses.length < 3 && (
+                <button
+                  onClick={() => navigate("/address")}
+                  className="px-4 py-2 w-[15vw] h-[12vh] border rounded-md bg-zinc-800 text-white hover:bg-zinc-900 cursor-pointer transition"
+                >
+                  Add New Address
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="w-full ">
+            <Payment />
+          </div>
+          
+        </>
+      ) : (
+        <div className="text-center mt-12">
+          <h1 className="text-2xl md:text-3xl">Your cart is empty</h1>
+          <button
+            onClick={() => navigate("/shop")}
+            className="mt-4 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Shop Now
+          </button>
+        </div>
       ) : (
         <button
           onClick={() => navigate("/login")}

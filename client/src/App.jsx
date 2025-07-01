@@ -12,15 +12,20 @@ import Checkout from './components/Checkout'
 import ScrollToTop from './components/ScrollToTop';
 import ProductInfo from './components/ProductInfo';
 import EmailVerification from './components/EmailVerification'
+import Order from "./components/Order"
 import DataProvider from './contexts/DataContext';
 import AuthProvider from './contexts/AuthContext';
 import AddressProvider from './contexts/AddressContext'
+import {OrderProvider} from "./contexts/OrderContext";
+import {PaymentProvider} from "./contexts/PaymentContext";
 
 const App = () => {
   return (
     <AuthProvider>
     <DataProvider value={{products: []}}>
     <AddressProvider>
+    <PaymentProvider>
+    <OrderProvider>
     <Router>
       <ScrollToTop />
       <Routes>
@@ -31,6 +36,7 @@ const App = () => {
           <Route path='product/:id' element={<ProductInfo />} />
           <Route path='checkout' element={<Checkout />} />
           <Route path='address' element={<Address />} />
+          <Route path='order' element={<Order />} />
 
         </Route>
         <Route path='login' element={<Login />} />
@@ -40,6 +46,8 @@ const App = () => {
 
       </Routes>
     </Router>
+    </OrderProvider>
+    </PaymentProvider>
     </AddressProvider>
     </DataProvider>
     </AuthProvider>

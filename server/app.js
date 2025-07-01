@@ -13,7 +13,7 @@ await connectDB();
 const app = express();
 
 app.use(cors({
-  origin: 'https://glorious-space-sniffle-q5r6w755g4qf4gg7-5173.app.github.dev',
+  origin: 'http://localhost:5173',
   credentials: true
 }));
 
@@ -43,8 +43,16 @@ app.use('/api/v1/user', userRouter);
 import addressRouter from './src/routes/address.routes.js';
 app.use('/api/v1/address', addressRouter);
 
+//Order Route
+import orderRouter from './src/routes/order.routes.js';
+app.use('/api/v1/orders', orderRouter);
+
 //Downloadable Invoices 
 app.use("/invoices", express.static("invoices"));
+
+//Payment Route
+import paymentRouter from './src/routes/payment.routes.js';
+app.use("/api/v1/payments", paymentRouter)
 
 
 export default app;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
-import { addAddress } from "../contexts/AddressContext";
+import { addAddress,updateAddress } from "../contexts/AddressContext";
 
 const Address = () => {
   const navigate = useNavigate();
@@ -10,6 +10,7 @@ const Address = () => {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const [formData, setFormData] = useState({
+    userId: user?._id,
     name: "",
     phone: "",
     addressLine: "",
@@ -35,12 +36,6 @@ const Address = () => {
 
  const addNewAddress = async (e) => {
   e.preventDefault(); 
-
-  if (!user) {
-    console.log("User not found!");
-    return;
-  }
-
   try {
     const myAddress = await addAddress(formData);
     if (myAddress?.data?.statusCode === 200) {
@@ -57,9 +52,27 @@ const Address = () => {
   }
 };
 
+const updateMyAddress = async (e) => {
+  e.preventDefault();
+  try {
+    const updatedAddress = await updateAddress(editId, formData);
+    if (updatedAddress?.data?.statusCode === 200) {
+      setSuccess("Address updated successfully!");
+      setError("");
+      navigate("/cart");
+    } else {
+      setError("Failed to update address.");
+    }
+  } catch (error) {
+    setError("Unable to update at this moment");
+    console.log(error);
+  }
+};
+
+
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-10 bg-zinc-100">
+    <div className="min-h-screen flex items-center justify-center px-4 py-10">
       <div className="bg-white max-w-xl w-full p-8 shadow-md rounded">
         <h1 className="text-2xl font-bold mb-6 text-center">
           {editId ? "Edit Address" : "Add New Address"}
@@ -68,7 +81,7 @@ const Address = () => {
         {error && <p className="text-red-500 mb-4">{error}</p>}
         {success && <p className="text-green-600 mb-4">{success}</p>}
 
-        <form onSubmit={addNewAddress} className="space-y-4">
+        <form onSubmit={editId?updateMyAddress:addNewAddress} className="space-y-4">
           <div>
             <label className="block font-medium mb-1">Name</label>
             <input

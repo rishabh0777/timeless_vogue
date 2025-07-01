@@ -16,7 +16,7 @@ const router = Router();
 router.route("/get").get(verifyJWT, getAddress);
 router.route("/add").post(verifyJWT, addAddress);
 router.route("/update/:id").put(verifyJWT, updateAddress);
-router.route("/delete/:id").delete(verifyJWT, deleteAddress);
+router.route("/delete").delete(verifyJWT, deleteAddress);
 
 export default router;
 
