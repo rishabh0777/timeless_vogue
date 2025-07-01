@@ -9,8 +9,8 @@ const Layout = () => {
       <Navbar />
       <Outlet />
       <Footer />
-    </main>
+    </main> 
   )
-}
+} 
 
 export default Layout

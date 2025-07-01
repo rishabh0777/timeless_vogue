@@ -16,7 +16,7 @@ const Order = () => {
       await cancelOrder(id);
     }
   };
-
+ 
   return (
     <div className="min-h-[100vh] px-4 md:px-12 py-10 mt-[8vh]">
       <h1 className="text-3xl font-bold text-center mb-6">My Orders</h1>

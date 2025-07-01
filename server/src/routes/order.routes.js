@@ -20,3 +20,4 @@ router.route("/cancel/:id").put(verifyJWT, cancelOrder);
 router.route("/admin/all").get(verifyJWT, getAllOrders); // add isAdmin check if needed
 
 export default router;
+ 

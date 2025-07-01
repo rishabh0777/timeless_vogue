@@ -17,7 +17,7 @@ const About = () => {
         title: 'OUR COLLECTION',
         description: 'Discover our curated collection of premium menswear, from classic formal wear to trendy casuals. We focus on delivering timeless pieces that blend comfort with style, ensuring you stand out wherever you go.'
     },
-    {
+    { 
         id: 4,
         title: 'CUSTOMIZED FIT',
         description: `We understand that fit is everything. That’s why we offer tailored solutions to ensure your clothes fit you perfectly. Choose from our customization options to get a personalized touch to your style.`

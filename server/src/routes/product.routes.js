@@ -24,3 +24,4 @@ router
   .delete(verifyJWT, removeItemFromCart);
 
 export default router;
+ 

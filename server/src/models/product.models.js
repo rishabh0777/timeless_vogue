@@ -21,7 +21,7 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-
+ 
 });
 
 const Product = mongoose.model('Product', productSchema);

@@ -23,7 +23,7 @@ const Payment = () => {
  const createMyOrder = async () => {
   if (!selectedAddr) return;
 
-  try {
+  try { 
     await initiatePayment({
     totalAmount,
     cartItems: cart.items,

@@ -12,7 +12,7 @@ const Checkout = () => {
     state: "",
     pincode: "",
     country: "",
-  }); 
+  });  
 
   const totalAmount = 1499; // Replace with real cart total
   const userId = "user-id-from-auth"; // Replace with real logged-in user ID

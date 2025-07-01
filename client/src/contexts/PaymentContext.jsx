@@ -49,7 +49,7 @@ export const PaymentProvider = ({ children }) => {
         currency: order.currency,
         name: "Timeless Vogue",
         description: "Order Payment",
-        order_id: order.id,
+        order_id: order.id, 
 
         handler: async function (response) {
           const invoice = await verifyPayment({

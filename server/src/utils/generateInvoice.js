@@ -12,7 +12,7 @@ export const generateInvoicePDF = ({ orderId, paymentId, address, cartItems, tot
   // Ensure invoices directory exists
   if (!fs.existsSync("invoices")) {
     fs.mkdirSync("invoices");
-  }
+  } 
 
   const stream = fs.createWriteStream(filePath);
   doc.pipe(stream);

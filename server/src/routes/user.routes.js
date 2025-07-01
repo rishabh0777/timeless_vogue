@@ -13,4 +13,4 @@ router.route('/logout').post(verifyJWT, logout)
 
 const userRouter = router;
 
-export default userRouter;
+export default userRouter; 

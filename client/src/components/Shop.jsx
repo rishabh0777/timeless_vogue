@@ -22,7 +22,7 @@ const Shop = () => {
     setCartLength,
     isLoggedIn,
     setIsLoggedIn
-  };
+  }; 
 
   const addItemToCart = async () => {
     if (!user?._id || !productId) {

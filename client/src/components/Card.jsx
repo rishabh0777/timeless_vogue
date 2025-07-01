@@ -18,7 +18,7 @@ const Card = ({ className, btnTxt, image, title, description, price }) => {
       duration: 0.7,
       ease: "power2.inOut",
     });
-  };
+  }; 
 
   return (
     <div

@@ -17,7 +17,7 @@ const ProductCard = ({ className, item, price, btnTxt, onClick, btnClick }) => {
       height: "0%", // Shrinks back
       duration: 0.7,
       ease: "power2.inOut"
-    });
+    }); 
   };
 
   return (

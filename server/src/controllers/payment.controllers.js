@@ -18,7 +18,7 @@ export const createPaymentOrder = asyncHandler(async (req, res) => {
   if (!amount || amount <= 0) {
     throw new ApiError(400, "Invalid amount");
   }
-
+ 
   const options = {
     amount: amount * 100, // in paise
     currency: "INR",

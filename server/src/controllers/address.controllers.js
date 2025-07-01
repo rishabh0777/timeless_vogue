@@ -15,7 +15,7 @@ export const addAddress = asyncHandler(async (req, res) => {
     )
   ) {
     throw new ApiError(400, "All fields are mandatory!");
-  }
+  } 
 
   const existingAddresses = await Address.find({ userId });
 

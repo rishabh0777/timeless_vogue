@@ -22,7 +22,7 @@ export const fetchAddress = async ()=>{
       headers:{
         Authorization:`Bearer ${token}`
       },
-    }); 
+    });  
     
     return response.data;
   }catch(error){

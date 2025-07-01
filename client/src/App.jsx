@@ -19,7 +19,7 @@ import AddressProvider from './contexts/AddressContext'
 import {OrderProvider} from "./contexts/OrderContext";
 import {PaymentProvider} from "./contexts/PaymentContext";
 
-const App = () => {
+const App = () => { 
   return (
     <AuthProvider>
     <DataProvider value={{products: []}}>

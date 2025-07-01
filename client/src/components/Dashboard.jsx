@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  return (
+  return ( 
     <>
       <div className="w-full min-h-screen relative">
         <div className="w-[90%] max-h-[80vh] min-h-[70vh] bg-zinc-500 absolute top-[15vh] left-1/2 transform -translate-x-1/2 overflow-hidden">

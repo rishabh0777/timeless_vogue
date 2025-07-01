@@ -12,7 +12,7 @@ const Category = () => {
         <div className="w-[90%] h-[80vh] absolute top-[15vh] left-1/2 transform -translate-x-1/2 rounded-xl">
           <h1 className="text-[4vw] text-center py-2">Wardrobe Essentials</h1>
           <div className="w-full h-[80%] grid grid-cols-3 items-center place-items-center gap-2">
-            <Card 
+            <Card  
               image={casualSweatShirt} 
               title="Casual Comfort" 
               description="Effortless style meets all-day comfort in our cozy sweatshirts."

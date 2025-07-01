@@ -20,7 +20,7 @@ export const OrderProvider = ({ children }) => {
     invoiceUrl,
     cartItems,
     totalAmount,
-    shippingAddress,
+    shippingAddress, 
   }) => {
     setOrderLoading(true);
     setError(null);

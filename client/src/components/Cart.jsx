@@ -20,7 +20,7 @@ const Cart = () => {
   const removeOneAddress = async (id)=>{
     if (!id) return;
     setAddressId(id);
-    try{
+    try{ 
       await removeAddress(id)
       fetchAddresses();
 

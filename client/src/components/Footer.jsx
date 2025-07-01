@@ -13,7 +13,7 @@ const Footer = () => {
         <div className='w-[30%] flex justify-center items-center text-[2.5vw] font-semibold'>
           <h1>Timeless Vogue</h1>
         </div>
-
+ 
         {/* Quick Links */}
         <div className='w-[40%] flex flex-col text-center'>
           <h2 className='text-[1.5vw] font-semibold'>Quick Links</h2>

@@ -21,7 +21,7 @@ export const addCart = async ({ userId, productId }) => {
 // function to fetch cart data
 export const fetchData = async (info) => {
   if (info.isLoggedIn) {
-    try {
+    try { 
       const response = await axios.get(`/api/v1/products/cart/${info.userId}`);
       info.setCart(response.data.data.cart);
       info.setCartLength(response.data.data.cart.items.length);

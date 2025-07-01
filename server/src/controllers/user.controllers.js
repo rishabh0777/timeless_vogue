@@ -19,7 +19,7 @@ const generateAccessAndRefreshTokens = async (userId)=>{
     }catch(error){
         throw new ApiError(500, 'Something went wrong while generating refresh and access token');
     }
-}
+} 
 const register = asyncHandler(async (req, res)=>{
     // get data from frontend
     //validate data 

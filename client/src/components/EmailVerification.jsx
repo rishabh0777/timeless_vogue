@@ -15,7 +15,7 @@ const EmailVerification = () => {
         alert('Invalid or missing token.');
         return;
       }
-
+ 
       // Send a GET request to the backend to verify the email
       const response = await axios.get(
         `api/v1/user/verify-email?token=${token}`

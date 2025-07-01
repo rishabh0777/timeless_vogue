@@ -18,7 +18,7 @@ const ProductInfo = () => {
       console.log("User not logged in or user ID missing");
       navigate("/login");
       return;
-    }
+    } 
 
     const cartData = {
       userId: user?._id,

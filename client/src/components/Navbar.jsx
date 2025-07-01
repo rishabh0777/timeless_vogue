@@ -20,7 +20,7 @@ const Navbar = () => {
     optionRef.current.classList.remove("flex");
     optionRef.current.classList.add("hidden");
   }
-  }
+  } 
 };
 
 
