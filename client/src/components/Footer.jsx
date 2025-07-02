@@ -1,44 +1,43 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 
 const Footer = () => {
   const navigate = useNavigate();
+
   return (
-    <div className='w-full h-[25vh] bg-white/10 backdrop-blur-md flex flex-col border-t-2 border-zinc-500'>
-      
+    <div className='w-full bg-white/10 backdrop-blur-md shadow-[0_-5px_20px_rgba(0,0,0,0.3)]'>
+
       {/* Top Section */}
-      <div className='w-full h-[80%] flex justify-between items-center px-10'>
-        
+      <div className='w-full flex flex-col md:flex-row justify-between items-center md:items-start px-4 md:px-10 pt-6 md:pt-10'>
+
         {/* Brand Name */}
-        <div className='w-[30%] flex justify-center items-center text-[2.5vw] font-semibold'>
+        <div className='mb-4 md:mb-0 w-full md:w-1/3 flex justify-center md:justify-start items-center text-[6vw] md:text-[2vw] font-semibold'>
           <h1>Timeless Vogue</h1>
         </div>
- 
+
         {/* Quick Links */}
-        <div className='w-[40%] flex flex-col text-center'>
-          <h2 className='text-[1.5vw] font-semibold'>Quick Links</h2>
-          <div className='flex justify-center gap-5 text-[1vw]'>
-            <a onClick={()=>navigate('/')} className='hover:underline'>Home</a>
-            <a onClick={()=>navigate('/shop')} className='hover:underline'>Shop</a>
-            <a onClick={()=>navigate('/about')} className='hover:underline'>About</a>
+        <div className='mb-4 md:mb-0 w-full md:w-1/3 flex flex-col items-center'>
+          <h2 className='text-[5vw] md:text-[1.5vw] font-semibold mb-2'>Quick Links</h2>
+          <div className='flex gap-4 text-[4vw] md:text-[1vw]'>
+            <button onClick={() => navigate('/')} className='hover:underline'>Home</button>
+            <button onClick={() => navigate('/shop')} className='hover:underline'>Shop</button>
+            <button onClick={() => navigate('/about')} className='hover:underline'>About</button>
           </div>
         </div>
 
         {/* Social Media */}
-        <div className='w-[30%] flex justify-center gap-4 text-[1.5vw]'>
+        <div className='w-full md:w-1/3 flex justify-center md:justify-end gap-4 text-[6vw] md:text-[1.5vw]'>
           <a href="#" className='hover:text-zinc-300'><i className="ri-facebook-fill"></i></a>
           <a href="#" className='hover:text-zinc-300'><i className="ri-instagram-line"></i></a>
           <a href="#" className='hover:text-zinc-300'><i className="ri-twitter-x-line"></i></a>
           <a href="#" className='hover:text-zinc-300'><i className="ri-linkedin-fill"></i></a>
         </div>
-
       </div>
 
       {/* Bottom Section */}
-      <div className='w-full h-[20%] flex justify-center items-center text-[1vw] border-t border-white/20'>
+      <div className='w-full text-center py-4 mt-4 text-[3vw] md:text-[1vw]'>
         <p>&copy; {new Date().getFullYear()} Timeless Vogue. All rights reserved.</p>
       </div>
-
     </div>
   );
 };

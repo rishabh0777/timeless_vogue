@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Category from './Category';
 import TopItems from './TopItems';
+import SearchBar from './SearchBar';
+import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';
 import heroPoster from '../assets/Images/Poster/heroPoster.jpg';
 
@@ -27,17 +29,14 @@ const Dashboard = () => {
         </>
       ) : (
         <>
-          <div className="w-full min-h-screen relative">
-            <div className="w-[90%] max-h-[80vh] min-h-[70vh] bg-zinc-500 absolute top-[15vh] left-1/2 transform -translate-x-1/2 overflow-hidden">
-              <h1 className="absolute z-[10] text-white text-[7vw] top-[15%] left-[3vw]">Timeless Vogue</h1>
-              <p className="absolute z-[10] text-white text-[2vw] w-[45%] top-[45%] left-[3vw]">
-                Unparalleled Sophistication, Endless Elegance – <span className="font-bold">Welcome to Timeless Vogue.</span>
-              </p>
-              <button onClick={() => navigate('/shop')} className="absolute z-[10] text-white bg-zinc-900 rounded-lg top-[70%] py-4 px-5 left-[35%] cursor-pointer text-[1.3vw]">
-                Discover Elegance
-              </button>
-              <img loading='lazy' className="w-full h-full absolute z-[8] object-cover object-top" src={heroPoster} alt="Hero Poster" />
+          <div className="w-full sm:min-h-[60vh] md:min-h-screen relative flex flex-col justify-center items-center">
+            <div className='w-[95%] h-[30vh] md:h-[80vh] sm:mt-[12vh] md:mt-10 relative overflow-hidden'>
+              <img src={heroPoster} alt="Hero Poster" className='w-full h-full object-cover  absolute rounded-lg inset-0 object-top' />
+              <h1 className="absolute z-10 text-white sm:text-[7.5vw] md:text-[7vw] sm:left-[3%] md:left-[5%] md:top-[15%] sm:top-[30%]">Timeless Vogue</h1>
+              <p className='absolute z-10 text-white sm:text-[2.6vw] md:text-[2.1vw] sm:left-[3%] md:left-[5%] sm:top-[50%] md:top-[40%]'>Unparalleled Sophistication, Endless <br /> Elelegance - Welcome to Timeless Vogue.</p>
+              <button onClick={() => navigate('/shop')} className='absolute z-10 text-white bg-zinc-800 sm:text-[2.6vw] md:text-[1.3vw] sm:left-[24%] sm:-translate-x-[24%]  md:left-[35%] md:-translate-x-[35%] sm:top-[68%] md:top-[70%] sm:px-4 sm:py-2 md:px-6 sm:py-3 rounded-lg hover:bg-zinc-900 transition-all'>Discover Elegance</button>
             </div>
+            <SearchBar className="md:hidden" />
           </div>
           <Category />
           <TopItems />
