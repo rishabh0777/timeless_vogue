@@ -12,6 +12,8 @@ export const PaymentProvider = ({ children }) => {
   const [paymentError, setPaymentError] = useState(null);
   const [invoiceUrl, setInvoiceUrl] = useState("");
   const { placeOrder } = useOrder();
+  const  url = import.meta.env.VITE_API_BASE
+
 
 
   const getAuthHeader = () => ({
@@ -36,8 +38,8 @@ export const PaymentProvider = ({ children }) => {
     if (!loaded) return alert("Razorpay SDK failed to load");
 
     try {
-      const keyRes = await axios.get("/api/v1/payments/get-key", getAuthHeader());
-      const orderRes = await axios.post("/api/v1/payments/create-order", {
+      const keyRes = await axios.get(`${url}/api/v1/payments/get-key`, getAuthHeader());
+      const orderRes = await axios.post(`${url}/api/v1/payments/create-order`, {
         amount: totalAmount,
       }, getAuthHeader());
 
@@ -97,7 +99,8 @@ export const PaymentProvider = ({ children }) => {
       const razorpay = new window.Razorpay(options);
       razorpay.open();
     } catch (error) {
-      console.error("💥 initiatePayment error:", error.message);
+      // console.error("💥 initiatePayment error:", error.message);
+      throw error
     }
   };
 
@@ -115,7 +118,7 @@ export const PaymentProvider = ({ children }) => {
 
     try {
       const { data } = await axios.post(
-        "/api/v1/payments/verify-payment",
+        `${url}/api/v1/payments/verify-payment`,
         {
           razorpay_order_id,
           razorpay_payment_id,
@@ -133,7 +136,7 @@ export const PaymentProvider = ({ children }) => {
     } catch (err) {
       const message = err.response?.data?.message || "Payment verification failed";
       setPaymentError(message);
-      console.error("❌ verifyPayment:", message);
+      // console.error("❌ verifyPayment:", message);
       return null;
     } finally {
       setPaymentLoading(false);

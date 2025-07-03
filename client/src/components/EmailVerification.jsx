@@ -4,6 +4,8 @@ import axios from 'axios';
 
 const EmailVerification = () => {
   const navigate = useNavigate();
+  const  url = import.meta.env.VITE_API_BASE
+
 
   const verifyUser = async () => {
     try {
@@ -18,7 +20,7 @@ const EmailVerification = () => {
  
       // Send a GET request to the backend to verify the email
       const response = await axios.get(
-        `api/v1/user/verify-email?token=${token}`
+        `${url}/api/v1/user/verify-email?token=${token}`
       );
 
       if (response.status === 201) {
@@ -28,7 +30,7 @@ const EmailVerification = () => {
         alert('Failed to verify email. Please try again.');
       }
     } catch (error) {
-      console.error('Error verifying email:', error);
+      // console.error('Error verifying email:', error);
       alert('An error occurred while verifying your email. Please try again.');
       navigate('/Login');
     }

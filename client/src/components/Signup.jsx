@@ -11,6 +11,8 @@ const Signup = () => {
   const [fullname, handleFullnameChange] = useInput("");
   const [email, handleEmailChange] = useInput("");
   const [password, handlePasswordChange] = useInput("");
+  const  url = import.meta.env.VITE_API_BASE
+
 
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -27,7 +29,7 @@ const Signup = () => {
     const userData = { username, fullname, email, password };
 
     try {
-      const response = await axios.post('/api/v1/user/register', userData);
+      const response = await axios.post(`${url}/api/v1/user/register`, userData);
       if (response?.status === 200 || response?.status === 201) {
         alert('Check your mailbox for verification email');
         navigate('/login');
@@ -35,7 +37,7 @@ const Signup = () => {
         alert('Something went wrong!');
       }
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       alert(error.response?.data?.message || "Signup failed");
     } finally {
       setLoading(false);

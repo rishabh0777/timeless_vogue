@@ -4,6 +4,8 @@ import axios from "axios";
 const Checkout = () => {
   const [addresses, setAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const  url = import.meta.env.VITE_API_BASE
+
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -33,7 +35,7 @@ const Checkout = () => {
 
   // Load existing addresses
   const fetchAddresses = async () => {
-    const { data } = await axios.get(`/api/address/all/${userId}`);
+    const { data } = await axios.get(`${url}/api/address/all/${userId}`);
     setAddresses(data.data);
   };
 
@@ -48,7 +50,7 @@ const Checkout = () => {
   const addAddress = async () => {
     try {
       const payload = { ...form, userId };
-      await axios.post("/api/v1/address/add", payload);
+      await axios.post(`${url}/api/v1/address/add`, payload);
       setForm({
         name: "",
         phone: "",
@@ -66,7 +68,7 @@ const Checkout = () => {
 
   const deleteAddress = async (id) => {
     if (window.confirm("Delete this address?")) {
-      await axios.delete(`/api/address/delete/${id}`);
+      await axios.delete(`${url}/api/address/delete/${id}`);
       fetchAddresses();
       if (selectedAddressId === id) setSelectedAddressId(null);
     }
@@ -79,13 +81,13 @@ const Checkout = () => {
     const res = await loadRazorpayScript();
     if (!res) return alert("Razorpay failed to load");
 
-    const { data } = await axios.post("/api/payment/create-order", {
+    const { data } = await axios.post(`${url}/api/payment/create-order`, {
       amount: totalAmount,
     });
 
     const { id: order_id, currency, amount } = data.data;
 
-    const keyRes = await axios.get("/api/v1/payment/get-key");
+    const keyRes = await axios.get(`${url}/api/v1/payment/get-key`);
     const options = {
       key: keyRes, // Replace with your key
       amount,
@@ -94,7 +96,7 @@ const Checkout = () => {
       description: "Payment",
       order_id,
       handler: async function (response) {
-        const verifyRes = await axios.post("/api/payment/verify", {
+        const verifyRes = await axios.post(`${url}/api/payment/verify`, {
           razorpay_order_id: response.razorpay_order_id,
           razorpay_payment_id: response.razorpay_payment_id,
           razorpay_signature: response.razorpay_signature,

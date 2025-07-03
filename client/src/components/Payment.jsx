@@ -30,7 +30,8 @@ const Payment = () => {
     selectedAddr
   });
   } catch (error) {
-    console.error("Payment initiation failed:", error);
+    // console.error("Payment initiation failed:", error);
+    throw error
   }
 };
 

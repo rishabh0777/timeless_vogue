@@ -39,7 +39,8 @@ const Shop = () => {
       const data = await addCart(cartData);
       if (data) await fetchData(info);
     } catch (err) {
-      console.error("Error adding to cart:", err);
+      // console.error("Error adding to cart:", err);
+      throw err
     }
   };
 

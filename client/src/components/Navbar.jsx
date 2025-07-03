@@ -48,7 +48,8 @@ const Navbar = () => {
         alert('Something went wrong!');
       }
     } catch (error) {
-      console.error(error);
+      // console.error(error);
+      throw error
     }
   };
 

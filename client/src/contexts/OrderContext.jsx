@@ -12,6 +12,8 @@ export const OrderProvider = ({ children }) => {
   const [orders, setOrders] = useState([]);
   const [orderLoading, setOrderLoading] = useState(false);
   const [error, setError] = useState(null);
+  const  url = import.meta.env.VITE_API_BASE
+
 
   // ✅ Place New Order
   const placeOrder = async ({
@@ -25,7 +27,7 @@ export const OrderProvider = ({ children }) => {
     setOrderLoading(true);
     setError(null);
     try {
-      const response = await axios.post("/api/v1/orders/create", {
+      const response = await axios.post(`${url}/api/v1/orders/create`, {
         razorpayOrderId,
         razorpayPaymentId,
         invoiceUrl,
@@ -52,7 +54,7 @@ export const OrderProvider = ({ children }) => {
     setOrderLoading(true);
     setError(null);
     try {
-      const response = await axios.get("/api/v1/orders/my");
+      const response = await axios.get(`${url}/api/v1/orders/my`);
       setOrders(response.data?.data || []);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to fetch orders");
@@ -66,7 +68,7 @@ export const OrderProvider = ({ children }) => {
     setOrderLoading(true);
     setError(null);
     try {
-      const response = await axios.put(`/api/v1/orders/cancel/${orderId}`);
+      const response = await axios.put(`${url}/api/v1/orders/cancel/${orderId}`);
       // Refresh orders after cancellation
       await fetchMyOrders();
       return response.data?.data;

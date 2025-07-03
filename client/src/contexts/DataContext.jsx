@@ -1,18 +1,21 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "./AuthContext";
+const  url = import.meta.env.VITE_API_BASE
+
 
 const DataContext = createContext();
 
 export const addCart = async ({ userId, productId }) => {
   try {
-    const response = await axios.post(`/api/v1/products/cart`, {
+    const response = await axios.post(`${url}/api/v1/products/cart`, {
       userId,
       productId,
     });
     return response.data;
   } catch (error) {
-    console.log(`unable to add item in cart: ${error}`)
+    // console.log(`unable to add item in cart: ${error}`)
+    throw error
   }
 };
 
@@ -22,11 +25,12 @@ export const addCart = async ({ userId, productId }) => {
 export const fetchData = async (info) => {
   if (info.isLoggedIn) {
     try { 
-      const response = await axios.get(`/api/v1/products/cart/${info.userId}`);
+      const response = await axios.get(`${url}/api/v1/products/cart/${info.userId}`);
       info.setCart(response.data.data.cart);
       info.setCartLength(response.data.data.cart.items.length);
     } catch (error) {
-      console.err(err);
+      // console.err(err);
+      throw err
     }
   } else {
     info.setCart({});
@@ -37,26 +41,28 @@ export const fetchData = async (info) => {
 export const removeItem = async ({ userId, productId }) => {
   try {
     const response = await axios.delete(
-      `/api/v1/products/cart/${userId}/remove-cart-item`,
+      `${url}/api/v1/products/cart/${userId}/remove-cart-item`,
       { data: { productId } }
     );
-    console.log(response);
+    // console.log(response);
     return response.data;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
+    throw error
   }
 };
 
 export const decreaseCartQuantity = async (userId, productId) => {
     try {
-      const response = await axios.put(`/api/v1/products/cart/decrease-quantity`, {
+      const response = await axios.put(`${url}/api/v1/products/cart/decrease-quantity`, {
         userId,
         productId,
       });
       setCart(response.data.data.cart);
       setCartLength(response.data.data.cart.items.length);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      throw error
     }
   }
 
@@ -78,7 +84,8 @@ const DataProvider = ({ children }) => {
         const response = await axios.get("/api/v1/products");
         setProducts(response.data);
       } catch (err) {
-        console.log(err);
+        // console.log(err);
+        throw err
       }
     };
     getProductData();
@@ -93,7 +100,8 @@ const DataProvider = ({ children }) => {
           setCart(response.data.data.cart);
           setCartLength(response.data.data.cart.items.length);
         } catch (error) {
-          console.err(err);
+          // console.err(err);
+          throw error
         }
       } else {
         setCart({});

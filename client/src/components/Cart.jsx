@@ -18,6 +18,8 @@ const Cart = () => {
   const [loading, setLoading] = useState(false);
   const [addressId, setAddressId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const  url = import.meta.env.VITE_API_BASE
+
 
   const info = {
     userId: user?._id,
@@ -48,7 +50,8 @@ const Cart = () => {
       await removeAddress(id);
       fetchAddresses();
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      throw error
     }
   };
 
@@ -58,7 +61,8 @@ const Cart = () => {
       await removeItem({ userId: user._id, productId: id });
       await fetchData(info);
     } catch (error) {
-      console.error("Failed to remove item", error);
+      // console.error("Failed to remove item", error);
+      throw error
     }
     setLoading(false);
   };
@@ -74,13 +78,14 @@ const Cart = () => {
     if (qty <= 1) return await remove(id);
     setLoading(true);
     try {
-      await axios.put(`/api/v1/products/cart/decrease-quantity`, {
+      await axios.put(`${url}/api/v1/products/cart/decrease-quantity`, {
         userId: user._id,
         productId: id,
       });
       await fetchData(info);
     } catch (error) {
-      console.error("Failed to decrease quantity", error);
+      // console.error("Failed to decrease quantity", error);
+      throw error
     }
     setLoading(false);
   };

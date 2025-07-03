@@ -9,6 +9,8 @@ const Login = () => {
   const { setIsLoggedIn } = useContext(AuthContext); 
   const [username, handleUsernameChange] = useInput("");
   const [password, handlePasswordChange] = useInput("");
+  const  url = import.meta.env.VITE_API_BASE
+
 
   const [loading, setLoading] = useState(false);     // Login submission loader
   const [isLoading, setIsLoading] = useState(true);  // Page skeleton loader
@@ -25,7 +27,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('/api/v1/user/login', { username, password });
+      const response = await axios.post(`${url}/api/v1/user/login`, { username, password });
       if (response?.status === 200 || response?.status === 201) {
         const { accessToken, refreshToken, user } = response.data.data;
         localStorage.setItem("accessToken", accessToken);
@@ -37,7 +39,7 @@ const Login = () => {
         alert('Something went wrong!');
       }
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       alert(error.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);

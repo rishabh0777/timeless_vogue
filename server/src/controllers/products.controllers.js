@@ -115,7 +115,7 @@ const removeItemFromCart = asyncHandler(async (req, res, next) => {
       .status(200)
       .json(new ApiResponse(200, cart, "Item successfully removed from cart"));
   } catch (error) {
-    console.error("Error removing item from cart:", error);
+    // console.error("Error removing item from cart:", error);
     return next(new ApiError(500, "Internal server error"));
   }
 });

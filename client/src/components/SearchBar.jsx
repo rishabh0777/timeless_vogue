@@ -11,9 +11,7 @@ const SearchBar = ({className}) => {
   // Normalize product list
   const productList = Array.isArray(products?.data) ? products.data : products;
 
-  useEffect(() => {
-    console.log('Products:', productList); // Debug: Check if product data is available
-  }, [products]);
+ 
 
   const handleChange = (e) => {
     const value = e.target.value;

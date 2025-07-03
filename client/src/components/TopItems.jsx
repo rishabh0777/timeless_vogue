@@ -36,10 +36,11 @@ const TopItems = () => {
       const data = await addCart(cartData);
       if (data) {
         await fetchData(info);
-        console.log("Item added to cart from TopItems");
+        // console.log("Item added to cart from TopItems");
       }
     } catch (err) {
-      console.error("Error adding to cart:", err);
+      // console.error("Error adding to cart:", err);
+      throw err
     }
   };
 

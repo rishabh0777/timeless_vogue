@@ -9,6 +9,8 @@ const Address = () => {
   const [searchParams] = useSearchParams();
   const editId = searchParams.get("edit");
   const user = JSON.parse(localStorage.getItem("user"));
+  const  url = import.meta.env.VITE_API_BASE
+
 
   const [formData, setFormData] = useState({
     userId: user?._id,
@@ -35,12 +37,12 @@ const Address = () => {
     if (editId) {
       const fetchEditData = async () => {
         try {
-          const res = await axios.get(`/api/v1/address/${editId}`);
+          const res = await axios.get(`${url}/api/v1/address/${editId}`);
           if (res?.data?.statusCode === 200) {
             setFormData({ ...res.data.data, userId: user._id });
           }
         } catch (err) {
-          console.error("Failed to fetch address", err);
+          // console.error("Failed to fetch address", err);
           setError("Unable to fetch address data.");
         }
       };
@@ -72,7 +74,7 @@ const Address = () => {
       }
     } catch (error) {
       setError("Something went wrong while saving address.");
-      console.error(error);
+      // console.error(error);
     }
   };
 
@@ -89,7 +91,7 @@ const Address = () => {
       }
     } catch (error) {
       setError("Unable to update at this moment");
-      console.log(error);
+      // console.log(error);
     }
   };
 
