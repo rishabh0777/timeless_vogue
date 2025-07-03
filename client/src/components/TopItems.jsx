@@ -85,8 +85,8 @@ const TopItems = () => {
   };
 
   return (
-    <div className="w-full sm:min-h-[120svh] md:min-h-[190vh] relative overflow-hidden pt-[18vh]">
-      <div className="w-[90%] min-h-[120vh] absolute md:top-[15vh] left-1/2 transform -translate-x-1/2 rounded-xl">
+    <div className="w-full sm:min-h-[120svh] md:min-h-[200vh] relative overflow-hidden sm:pt-[18vh] md:pt-[35vh]">
+      <div className="w-[90%] min-h-[150vh] absolute md:top-[25vh] left-1/2 transform -translate-x-1/2 rounded-xl">
         <h1 className="md:text-[4vw] sm:text-[7vw] text-center py-2">Signature Collection</h1>
 
         {/* Grid layout for md and up */}
