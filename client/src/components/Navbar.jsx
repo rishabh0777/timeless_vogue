@@ -14,6 +14,8 @@ const Navbar = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const [isLoading, setIsLoading] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const url = import.meta.env.VITE_API_BASE_URL
+
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1500);
@@ -34,7 +36,7 @@ const Navbar = () => {
   const handleLogout = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/v1/user/logout');
+      const response = await axios.post(`${url}/api/v1/user/logout`);
       if (response?.status === 200 || response?.status === 201) {
         optionRef.current.classList.add("hidden");
         optionRef.current.classList.remove("flex");

@@ -2,32 +2,32 @@ import { createContext, useState } from "react";
 import axios from "axios";
 
 const AddressContext = createContext();
-const  url = import.meta.env.VITE_API_BASE
+const url = import.meta.env.VITE_API_BASE_URL
 
 export const addAddress = async (formData) => {
-  try{
+  try {
     const response = await axios.post(
-    `${url}/api/v1/address/add`,
-    formData);
+      `${url}/api/v1/address/add`,
+      formData);
     return response;
-  }catch(err){
+  } catch (err) {
     // console.log("something went wrong!")
     throw err
   }
 };
 
 
-export const fetchAddress = async ()=>{
-  try{
+export const fetchAddress = async () => {
+  try {
     const token = localStorage.getItem("token");
-    const response = await axios.get(`${url}/api/v1/address/get`,{
-      headers:{
-        Authorization:`Bearer ${token}`
+    const response = await axios.get(`${url}/api/v1/address/get`, {
+      headers: {
+        Authorization: `Bearer ${token}`
       },
-    });  
-    
+    });
+
     return response.data;
-  }catch(error){
+  } catch (error) {
     // console.log("Failed to fetch Address!: ", error);
   }
 }
@@ -82,11 +82,11 @@ export const removeAddress = async (id) => {
 const AddressProvider = ({ children }) => {
   const [addresses, setAddresses] = useState([])
   const [selectedAddress, setSelectedAddress] = useState('')
-  
+
 
   return (
     <AddressContext.Provider
-      value={{addresses, setAddresses, selectedAddress, setSelectedAddress}}
+      value={{ addresses, setAddresses, selectedAddress, setSelectedAddress }}
     >
       {children}
     </AddressContext.Provider>

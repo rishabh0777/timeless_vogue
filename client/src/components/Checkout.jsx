@@ -4,7 +4,7 @@ import axios from "axios";
 const Checkout = () => {
   const [addresses, setAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
-  const  url = import.meta.env.VITE_API_BASE
+  const url = import.meta.env.VITE_API_BASE_URL
 
   const [form, setForm] = useState({
     name: "",

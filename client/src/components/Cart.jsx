@@ -18,7 +18,7 @@ const Cart = () => {
   const [loading, setLoading] = useState(false);
   const [addressId, setAddressId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const  url = import.meta.env.VITE_API_BASE
+  const url = import.meta.env.VITE_API_BASE_URL
 
 
   const info = {

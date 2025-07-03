@@ -11,7 +11,7 @@ const Signup = () => {
   const [fullname, handleFullnameChange] = useInput("");
   const [email, handleEmailChange] = useInput("");
   const [password, handlePasswordChange] = useInput("");
-  const  url = import.meta.env.VITE_API_BASE
+  const url = import.meta.env.VITE_API_BASE_URL
 
 
   const [loading, setLoading] = useState(false);

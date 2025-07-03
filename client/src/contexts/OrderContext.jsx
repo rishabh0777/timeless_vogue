@@ -12,7 +12,7 @@ export const OrderProvider = ({ children }) => {
   const [orders, setOrders] = useState([]);
   const [orderLoading, setOrderLoading] = useState(false);
   const [error, setError] = useState(null);
-  const  url = import.meta.env.VITE_API_BASE
+  const url = import.meta.env.VITE_API_BASE_URL
 
 
   // ✅ Place New Order

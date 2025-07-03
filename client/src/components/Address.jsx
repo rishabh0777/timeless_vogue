@@ -9,7 +9,7 @@ const Address = () => {
   const [searchParams] = useSearchParams();
   const editId = searchParams.get("edit");
   const user = JSON.parse(localStorage.getItem("user"));
-  const  url = import.meta.env.VITE_API_BASE
+  const url = import.meta.env.VITE_API_BASE_URL
 
 
   const [formData, setFormData] = useState({

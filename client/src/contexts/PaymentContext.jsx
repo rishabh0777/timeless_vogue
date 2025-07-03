@@ -12,7 +12,7 @@ export const PaymentProvider = ({ children }) => {
   const [paymentError, setPaymentError] = useState(null);
   const [invoiceUrl, setInvoiceUrl] = useState("");
   const { placeOrder } = useOrder();
-  const  url = import.meta.env.VITE_API_BASE
+  const url = import.meta.env.VITE_API_BASE_URL
 
 
 

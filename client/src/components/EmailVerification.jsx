@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const EmailVerification = () => {
   const navigate = useNavigate();
-  const  url = import.meta.env.VITE_API_BASE
+  const url = import.meta.env.VITE_API_BASE_URL
 
 
   const verifyUser = async () => {
