@@ -17,6 +17,7 @@ const Shop = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [productId, setProductId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedFilter, setSelectedFilter] = useState("filter");
 
   const searchParams = new URLSearchParams(location.search);
   const searchedProductId = searchParams.get("item");
@@ -32,68 +33,51 @@ const Shop = () => {
   };
 
   const addItemToCart = async () => {
-    if (!user?._id || !productId) {
-      console.log("User or Product ID missing");
-      return;
-    }
-
-    const cartData = {
-      userId: user._id,
-      productId: productId,
-    };
-
+    if (!user?._id || !productId) return;
+    const cartData = { userId: user._id, productId: productId };
     try {
       const data = await addCart(cartData);
-      if (data) {
-        await fetchData(info);
-        console.log("Item added to cart from Shop");
-      } else {
-        console.log("Add to cart failed");
-      }
+      if (data) await fetchData(info);
     } catch (err) {
       console.error("Error adding to cart:", err);
     }
   };
 
   useEffect(() => {
-    if (productId) {
-      addItemToCart();
-    }
+    if (productId) addItemToCart();
   }, [productId]);
 
   useEffect(() => {
     if (products && Array.isArray(products.data)) {
-      let filteredProducts = [];
+      let filteredProducts = selectedCategory === "All"
+        ? [...products.data]
+        : products.data.filter((product) =>
+            product.category.some(
+              (cat) => cat.toLowerCase() === selectedCategory.toLowerCase()
+            )
+          );
 
-      if (selectedCategory === "All") {
-        filteredProducts = [...products.data];
-      } else {
-        filteredProducts = products.data.filter((product) =>
-          product.category.some(
-            (cat) => cat.toLowerCase() === selectedCategory.toLowerCase()
-          )
-        );
+      // Apply basic filter logic (you can expand this)
+      if (selectedFilter === "price") {
+        filteredProducts.sort((a, b) => a.price - b.price);
+      } else if (selectedFilter === "newest") {
+        filteredProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       }
 
-      // Prioritize searched product (if any)
+      // Bring searched item to top
       if (searchedProductId) {
         const index = filteredProducts.findIndex((p) => p._id === searchedProductId);
         if (index !== -1) {
           const [item] = filteredProducts.splice(index, 1);
-          filteredProducts.unshift(item); // Bring it to the top
+          filteredProducts.unshift(item);
         }
       }
 
       setMyProducts(filteredProducts);
-
-      // Simulate loading
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1200);
+      setTimeout(() => setIsLoading(false), 1200);
     }
-  }, [products, selectedCategory, searchedProductId]);
+  }, [products, selectedCategory, selectedFilter, searchedProductId]);
 
-  // Optional: Clean URL by removing ?item after showing
   useEffect(() => {
     if (searchedProductId) {
       const timeout = setTimeout(() => {
@@ -114,51 +98,105 @@ const Shop = () => {
       {isLoading ? (
         <ShopSkeleton />
       ) : (
-        <div className="w-full min-h-[70svh] pt-[10vh] relative">
-          {/* Header and category filters */}
-          <div className="w-full h-[25vh] fixed z-500 bg-white py-4 text-center text-[4vw]">
-            <h1>The Wardrobe</h1>
-            <div className="w-full flex justify-between px-12">
-              <div className="flex gap-4 text-[0.99vw]">
-                {["All", "Top Wear", "Bottom Wear", "Winter Wear", "Summer", "Informal", "Formal"].map((category) => (
-                  <p
-                    key={category}
-                    onClick={() => {
-                      setSelectedCategory(category);
-                      setIsLoading(true); // Re-trigger loader
-                    }}
-                    className={`cursor-pointer ${selectedCategory === category ? "font-bold" : ""}`}
-                  >
-                    {category.toUpperCase()}
-                  </p>
-                ))}
+        <div className="w-full min-h-[90svh] pt-[10vh] relative">
+          {/* Header and filters */}
+          <div className="w-full fixed md:top-[9vh] z-100 bg-white py-4 text-center shadow-md">
+            <div className="max-w-[95%] md:max-w-[90%] xl:max-w-[1200px] mx-auto">
+              <h1 className="md:text-[4vw] sm:text-[7vw] font-bold mb-2">The Wardrobe</h1>
+
+              {/* Mobile: Unified dropdown */}
+              <div className="block md:hidden w-full px-2">
+                <select
+                  className="w-[40vw] px-3 py-2 rounded-md shadow text-[4vw]"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (["Filter", "Top Wear", "Bottom Wear", "Winter Wear", "Summer", "Informal", "Formal"].includes(value)) {
+                      setSelectedCategory(value);
+                      setIsLoading(true);
+                    } else {
+                      setSelectedFilter(value);
+                      setIsLoading(true);
+                    }
+                  }}
+                >
+                  <optgroup label="Categories">
+                    {["Filter", "Top Wear", "Bottom Wear", "Winter Wear", "Summer", "Informal", "Formal"].map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="Filters">
+                    <option value="popularity">Popularity</option>
+                    <option value="price">Price</option>
+                    <option value="newest">Newest</option>
+                    <option value="discount">Discount</option>
+                  </optgroup>
+                </select>
               </div>
-              <select className="px-2 py-1 text-[0.99vw] rounded-md" name="filter">
-                <option value="filter">Filter</option>
-                <option value="popularity">Popularity</option>
-                <option value="price">Price</option>
-                <option value="newest">Newest</option>
-                <option value="discount">Discount</option>
-              </select>
+
+              {/* Desktop: category & filter separated */}
+              <div className="hidden md:flex w-full justify-between items-center gap-3">
+                <div className="flex gap-3 text-[1vw] whitespace-nowrap px-1">
+                  {["All", "Top Wear", "Bottom Wear", "Winter Wear", "Summer", "Informal", "Formal"].map((category) => (
+                    <p
+                      key={category}
+                      onClick={() => {
+                        setSelectedCategory(category);
+                        setIsLoading(true);
+                      }}
+                      className={`cursor-pointer px-2 py-1 rounded-md transition-all ${
+                        selectedCategory === category
+                          ? "font-bold underline underline-offset-4"
+                          : ""
+                      }`}
+                    >
+                      {category.toUpperCase()}
+                    </p>
+                  ))}
+                </div>
+
+                <select
+                  className="px-3 py-2 rounded-md border text-[1vw]"
+                  name="filter"
+                  onChange={(e) => {
+                    setSelectedFilter(e.target.value);
+                    setIsLoading(true);
+                  }}
+                >
+                  <option value="filter">Filter</option>
+                  <option value="popularity">Popularity</option>
+                  <option value="price">Price</option>
+                  <option value="newest">Newest</option>
+                  <option value="discount">Discount</option>
+                </select>
+              </div>
             </div>
           </div>
 
-          {/* Products List */}
-          <div className="w-full absolute top-[30vh] overflow-scroll min-h-[100vh] py-10 px-12 grid grid-cols-3 gap-2 justify-items-center shadow-lg z-50">
-            {isLoading
-              ? Array.from({ length: 6 }).map((_, i) => <ProductCardSkeleton key={i} />)
-              : myProducts.length > 0
-              ? myProducts.map((product) => (
+          {/* Product Grid */}
+          <div className="w-full absolute top-[30vh] md:top-[25vh] px-4 md:px-0">
+            <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center min-h-[100vh]">
+              {isLoading ? (
+                Array.from({ length: 6 }).map((_, i) => (
+                  <ProductCardSkeleton key={i} />
+                ))
+              ) : myProducts.length > 0 ? (
+                myProducts.map((product) => (
                   <ProductCard
                     key={product._id}
                     item={product}
-                    btnTxt={"Add to Cart"}
+                    btnTxt="Add to Cart"
                     price={`$ ${product.price}`}
                     onClick={() => handleSetMyProductId(product._id)}
                     btnClick={() => setProductId(product._id)}
+                    className="w-[80vw] h-[60vh] sm:w-[90vw] md:w-[24vw] md:h-[55vh]"
                   />
                 ))
-              : <p className="col-span-3">No products found in this category.</p>}
+              ) : (
+                <p className="col-span-full text-center text-xl">No products found in this category.</p>
+              )}
+            </div>
           </div>
         </div>
       )}

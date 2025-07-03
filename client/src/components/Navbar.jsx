@@ -78,7 +78,7 @@ const Navbar = () => {
           <div className='relative cursor-pointer' onClick={() => navigate('/cart')}>
             <i className="ri-shopping-bag-line text-xl"></i>
             {cartLength > 0 && (
-              <p className='h-[1.5vw] w-[1.5vw] flex justify-center items-center rounded-full text-[0.8vw] absolute left-2 top-[-1.2vh] bg-zinc-800 text-white'>
+              <p className='md:h-[1.5vw] md:w-[1.5vw] w-[5vw] h-[5vw] flex justify-center items-center rounded-full md:text-[0.8vw] text-[3vw] absolute md:left-2 sm:-left-2 top-[-1.2vh] bg-zinc-800 text-white'>
                 {cartLength}
               </p>
             )}

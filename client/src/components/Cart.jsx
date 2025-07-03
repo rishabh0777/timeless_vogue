@@ -6,7 +6,7 @@ import { fetchAddress, removeAddress } from "../contexts/AddressContext";
 import { AuthContext } from "../contexts/AuthContext";
 import { AddressContext } from "../contexts/AddressContext";
 import Payment from './Payment';
-import CartSkeleton from "../loaderComponents/CartSkeleton"; // ✅ Skeleton loader
+import CartSkeleton from "../loaderComponents/CartSkeleton";
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ const Cart = () => {
 
   const [loading, setLoading] = useState(false);
   const [addressId, setAddressId] = useState("");
-  const [isLoading, setIsLoading] = useState(true); // ✅ Skeleton state
+  const [isLoading, setIsLoading] = useState(true);
 
   const info = {
     userId: user?._id,
@@ -30,24 +30,19 @@ const Cart = () => {
   const fetchAddresses = async () => {
     if (user) {
       const addr = await fetchAddress();
-      if (Array.isArray(addr.data)) {
-        setAddresses(addr.data);
-      } else {
-        setAddresses([]);
-      }
+      setAddresses(Array.isArray(addr.data) ? addr.data : []);
     }
   };
 
   useEffect(() => {
     const fetchInitial = async () => {
       await Promise.all([fetchData(info), fetchAddresses()]);
+      setIsLoading(false);
     };
     fetchInitial();
-    setIsLoading(false)
   }, []);
 
   const removeOneAddress = async (id) => {
-    if (!id) return;
     setAddressId(id);
     try {
       await removeAddress(id);
@@ -55,35 +50,28 @@ const Cart = () => {
     } catch (error) {
       console.log(error);
     }
-    setLoading(false);
   };
 
   const remove = async (id) => {
-    if (!id) return;
     setLoading(true);
     try {
       await removeItem({ userId: user._id, productId: id });
       await fetchData(info);
     } catch (error) {
-      console.error("Failed to remove item from cart", error);
+      console.error("Failed to remove item", error);
     }
     setLoading(false);
   };
 
   const increaseQuantity = async (id) => {
-    if (!id) return;
     setLoading(true);
     await addCart({ userId: user._id, productId: id });
     await fetchData(info);
     setLoading(false);
   };
 
-  const decreaseQuantity = async (id, currentQty) => {
-    if (!id) return;
-    if (currentQty <= 1) {
-      await remove(id);
-      return;
-    }
+  const decreaseQuantity = async (id, qty) => {
+    if (qty <= 1) return await remove(id);
     setLoading(true);
     try {
       await axios.put(`/api/v1/products/cart/decrease-quantity`, {
@@ -110,7 +98,7 @@ const Cart = () => {
 
       {user ? cart?.items?.length > 0 ? (
         <>
-          {/* ✅ CART SECTION */}
+          {/* ✅ Headers */}
           <div className="hidden md:grid grid-cols-5 font-semibold text-sm text-zinc-600 pb-3">
             <p className="col-span-2">Product</p>
             <p className="text-center">Price</p>
@@ -118,27 +106,41 @@ const Cart = () => {
             <p className="text-center">Subtotal</p>
           </div>
 
+          {/* ✅ Cart Items */}
           {cart.items.map((item) => (
             <div key={item.productId._id} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center py-6 border-t border-zinc-200">
-              <div className="col-span-2 flex gap-4 items-center">
+              <div className="col-span-2 flex gap-4 items-start sm:items-center">
                 <div className="w-20 h-20 bg-zinc-100 rounded overflow-hidden">
                   <img src={item.productId.image} alt={item.productId.title} className="w-full h-full object-cover" />
                 </div>
                 <div>
-                  <h2 className="font-bold text-base">{item.productId.title}</h2>
+                  <h2 className="font-bold text-sm sm:text-base">{item.productId.title}</h2>
                   <p className="text-xs text-zinc-600 line-clamp-2">{item.productId.description}</p>
                   <button onClick={() => remove(item.productId._id)} className="text-red-500 text-xs mt-1">
                     Remove
                   </button>
                 </div>
               </div>
-              <div className="text-center text-sm">₹{item.productId.price}</div>
-              <div className="flex justify-center items-center gap-2">
-                <button onClick={() => decreaseQuantity(item.productId._id, item.quantity)} className="px-2 py-1 bg-zinc-200 rounded">-</button>
-                <span>{item.quantity}</span>
-                <button onClick={() => increaseQuantity(item.productId._id)} className="px-2 py-1 bg-zinc-200 rounded">+</button>
+
+              {/* Price */}
+              <div className="text-center text-sm sm:text-base">
+                <span className="md:hidden font-medium block mb-1">Price:</span>
+                ₹{item.productId.price}
               </div>
-              <div className="text-center font-medium text-sm">
+
+              {/* Quantity */}
+              <div className="flex flex-col justify-center items-center gap-1">
+                <span className="md:hidden font-medium mb-1">Quantity:</span>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => decreaseQuantity(item.productId._id, item.quantity)} className="px-2 py-1 bg-zinc-200 rounded">-</button>
+                  <span>{item.quantity}</span>
+                  <button onClick={() => increaseQuantity(item.productId._id)} className="px-2 py-1 bg-zinc-200 rounded">+</button>
+                </div>
+              </div>
+
+              {/* Subtotal */}
+              <div className="text-center font-medium text-sm sm:text-base">
+                <span className="md:hidden font-medium block mb-1">Subtotal:</span>
                 ₹{(item.productId.price * item.quantity).toFixed(2)}
               </div>
             </div>
@@ -146,7 +148,18 @@ const Cart = () => {
 
           {loading && <p className="text-center text-sm text-zinc-500 mt-4">Updating cart...</p>}
 
-          {/* ✅ ADDRESS SECTION */}
+          {/* ✅ Total Amount */}
+          <div className="mt-6 flex justify-end">
+            <div className="w-full sm:w-[80%] md:w-[50%] lg:w-[30%] bg-zinc-100 rounded-lg p-4">
+              <div className="flex justify-between text-lg font-semibold mb-2">
+                <p>Total Amount:</p>
+                <p>₹{totalPrice?.toFixed(2)}</p>
+              </div>
+              <p className="text-sm text-zinc-600">This is the total cost of your selected items.</p>
+            </div>
+          </div>
+
+          {/* ✅ Address Section */}
           <div className="mt-10">
             <h2 className="text-xl font-semibold mb-4">Choose Delivery Address</h2>
             <div className="flex flex-wrap gap-5 justify-center">
@@ -170,31 +183,33 @@ const Cart = () => {
                         e.stopPropagation();
                         navigate(`/address?edit=${addr._id}`);
                       }}
-                      className="text-blue-600 text-sm cursor-pointer mt-2"
+                      className="text-blue-600 text-sm mt-2"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => removeOneAddress(addr._id)}
-                      className="text-red-600 text-sm cursor-pointer mt-2"
+                      className="text-red-600 text-sm mt-2"
                     >
                       Remove
                     </button>
                   </div>
                 </div>
               ))}
+
+              {/* ✅ Add New Address Styled as Card */}
               {addresses.length < 3 && (
-                <button
+                <div
                   onClick={() => navigate("/address")}
-                  className="px-4 py-2 w-[15vw] h-[12vh] border rounded-md bg-zinc-800 text-white hover:bg-zinc-900 cursor-pointer transition"
+                  className="cursor-pointer w-[30%] min-w-[250px] flex items-center justify-center border border-zinc-300 p-4 rounded-lg bg-zinc-800 text-white hover:bg-zinc-900 transition"
                 >
                   Add New Address
-                </button>
+                </div>
               )}
             </div>
           </div>
 
-          {/* ✅ PAYMENT SECTION */}
+          {/* ✅ Payment Section */}
           <div className="w-full mt-10">
             <Payment />
           </div>

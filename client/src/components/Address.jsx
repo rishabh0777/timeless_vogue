@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
-import { addAddress,updateAddress } from "../contexts/AddressContext";
+import { addAddress, updateAddress } from "../contexts/AddressContext";
+import AddressSkeleton from "../loaderComponents/AddressSkeleton";
 
 const Address = () => {
   const navigate = useNavigate();
@@ -18,15 +19,38 @@ const Address = () => {
     state: "",
     pincode: "",
     country: "",
-  }); 
+  });
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(true); // show skeleton on every mount
 
- 
+  useEffect(() => {
+    // Always show skeleton for 1 sec
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    // If editing, fetch address
+    if (editId) {
+      const fetchEditData = async () => {
+        try {
+          const res = await axios.get(`/api/v1/address/${editId}`);
+          if (res?.data?.statusCode === 200) {
+            setFormData({ ...res.data.data, userId: user._id });
+          }
+        } catch (err) {
+          console.error("Failed to fetch address", err);
+          setError("Unable to fetch address data.");
+        }
+      };
+      fetchEditData();
+    }
+
+    return () => clearTimeout(timer);
+  }, [editId, user._id]);
 
   const handleChange = (e) => {
-    e.preventDefault()
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -34,42 +58,42 @@ const Address = () => {
     }));
   };
 
- const addNewAddress = async (e) => {
-  e.preventDefault(); 
-  try {
-    const myAddress = await addAddress(formData);
-    if (myAddress?.data?.statusCode === 200) {
-      setSuccess("Address saved successfully!");
-      setError("");
-      navigate("/cart");
-    } else {
-      setError("Failed to save address.");
-      setSuccess("");
+  const addNewAddress = async (e) => {
+    e.preventDefault();
+    try {
+      const myAddress = await addAddress(formData);
+      if (myAddress?.data?.statusCode === 200) {
+        setSuccess("Address saved successfully!");
+        setError("");
+        navigate("/cart");
+      } else {
+        setError("Failed to save address.");
+        setSuccess("");
+      }
+    } catch (error) {
+      setError("Something went wrong while saving address.");
+      console.error(error);
     }
-  } catch (error) {
-    setError("Something went wrong while saving address.");
-    console.error(error);
-  }
-};
+  };
 
-const updateMyAddress = async (e) => {
-  e.preventDefault();
-  try {
-    const updatedAddress = await updateAddress(editId, formData);
-    if (updatedAddress?.data?.statusCode === 200) {
-      setSuccess("Address updated successfully!");
-      setError("");
-      navigate("/cart");
-    } else {
-      setError("Failed to update address.");
+  const updateMyAddress = async (e) => {
+    e.preventDefault();
+    try {
+      const updatedAddress = await updateAddress(editId, formData);
+      if (updatedAddress?.data?.statusCode === 200) {
+        setSuccess("Address updated successfully!");
+        setError("");
+        navigate("/cart");
+      } else {
+        setError("Failed to update address.");
+      }
+    } catch (error) {
+      setError("Unable to update at this moment");
+      console.log(error);
     }
-  } catch (error) {
-    setError("Unable to update at this moment");
-    console.log(error);
-  }
-};
+  };
 
-
+  if (isLoading) return <AddressSkeleton />;
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-10">
@@ -81,7 +105,7 @@ const updateMyAddress = async (e) => {
         {error && <p className="text-red-500 mb-4">{error}</p>}
         {success && <p className="text-green-600 mb-4">{success}</p>}
 
-        <form onSubmit={editId?updateMyAddress:addNewAddress} className="space-y-4">
+        <form onSubmit={editId ? updateMyAddress : addNewAddress} className="space-y-4">
           <div>
             <label className="block font-medium mb-1">Name</label>
             <input
