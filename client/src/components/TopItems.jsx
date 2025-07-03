@@ -85,7 +85,7 @@ const TopItems = () => {
   };
 
   return (
-    <div className="w-full sm:min-h-[80svh] md:min-h-[160vh] relative overflow-hidden">
+    <div className="w-full sm:min-h-[120svh] md:min-h-[190vh] relative overflow-hidden pt-[18vh]">
       <div className="w-[90%] min-h-[120vh] absolute md:top-[15vh] left-1/2 transform -translate-x-1/2 rounded-xl">
         <h1 className="md:text-[4vw] sm:text-[7vw] text-center py-2">Signature Collection</h1>
 

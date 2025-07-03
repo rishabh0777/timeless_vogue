@@ -2,27 +2,26 @@ import React from "react";
 
 const ShopSkeleton = () => {
   return (
-    <div className="w-full min-h-screen pt-[12vh] px-4 animate-pulse">
-      {/* Header */}
-      <div className="w-[50%] h-10 mx-auto bg-zinc-200 rounded mb-6" />
-
-      {/* Filters */}
-      <div className="hidden md:flex justify-between mb-6 max-w-[90%] mx-auto">
-        <div className="flex gap-3">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="w-24 h-6 bg-zinc-200 rounded" />
+    <div className="w-full min-h-[100vh] pt-[12vh] px-4 md:px-10">
+      {/* Simulated filter header */}
+      <div className="max-w-[1200px] mx-auto mb-10">
+        <div className="h-10 w-40 bg-zinc-200 rounded mb-4 animate-pulse"></div>
+        <div className="flex gap-4 flex-wrap">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="h-8 w-24 bg-zinc-200 rounded animate-pulse" />
           ))}
         </div>
-        <div className="w-32 h-8 bg-zinc-200 rounded" />
       </div>
 
-      {/* Product Cards */}
-      <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+      {/* Product Grid Skeleton */}
+      <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-6 max-w-[1200px] mx-auto">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div
-            key={i}
-            className="w-[90vw] sm:w-[90vw] md:w-[24vw] h-[55vh] bg-zinc-200 rounded-lg"
-          />
+          <div key={i} className="rounded-lg p-4 animate-pulse bg-white shadow-sm">
+            <div className="w-full h-48 bg-zinc-200 rounded mb-4"></div>
+            <div className="h-4 w-3/4 bg-zinc-200 rounded mb-2"></div>
+            <div className="h-4 w-1/2 bg-zinc-200 rounded mb-4"></div>
+            <div className="h-10 w-full bg-zinc-300 rounded"></div>
+          </div>
         ))}
       </div>
     </div>

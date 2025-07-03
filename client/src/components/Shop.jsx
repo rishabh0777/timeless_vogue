@@ -52,10 +52,10 @@ const Shop = () => {
       let filteredProducts = selectedCategory === "All"
         ? [...products.data]
         : products.data.filter((product) =>
-            product.category.some(
-              (cat) => cat.toLowerCase() === selectedCategory.toLowerCase()
-            )
-          );
+          product.category.some(
+            (cat) => cat.toLowerCase() === selectedCategory.toLowerCase()
+          )
+        );
 
       // Apply basic filter logic (you can expand this)
       if (selectedFilter === "price") {
@@ -98,16 +98,18 @@ const Shop = () => {
       {isLoading ? (
         <ShopSkeleton />
       ) : (
-        <div className="w-full min-h-[90svh] pt-[10vh] relative">
+        <div className="w-full min-h-[90svh] pt-[10vh] relative pb-10">
           {/* Header and filters */}
           <div className="w-full fixed md:top-[9vh] z-100 bg-white py-4 text-center shadow-md">
             <div className="max-w-[95%] md:max-w-[90%] xl:max-w-[1200px] mx-auto">
-              <h1 className="md:text-[4vw] sm:text-[7vw] font-bold mb-2">The Wardrobe</h1>
+              <h1 className="md:text-[4vw] sm:text-[7vw] font-bold mb-2 sm:hidden md:flex">The Wardrobe</h1>
 
               {/* Mobile: Unified dropdown */}
-              <div className="block md:hidden w-full px-2">
+              <div className="flex items-center justify-between md:hidden w-full px-2">
+                <h1 className="md:text-[4vw] sm:text-[7vw] font-bold md:hidden md:flex">The Wardrobe</h1>
+
                 <select
-                  className="w-[40vw] px-3 py-2 rounded-md shadow text-[4vw]"
+                  className="w-[30vw] px-3 py-2 rounded-md shadow text-[3vw]"
                   onChange={(e) => {
                     const value = e.target.value;
                     if (["Filter", "Top Wear", "Bottom Wear", "Winter Wear", "Summer", "Informal", "Formal"].includes(value)) {
@@ -145,11 +147,10 @@ const Shop = () => {
                         setSelectedCategory(category);
                         setIsLoading(true);
                       }}
-                      className={`cursor-pointer px-2 py-1 rounded-md transition-all ${
-                        selectedCategory === category
+                      className={`cursor-pointer px-2 py-1 rounded-md transition-all ${selectedCategory === category
                           ? "font-bold underline underline-offset-4"
                           : ""
-                      }`}
+                        }`}
                     >
                       {category.toUpperCase()}
                     </p>
@@ -175,7 +176,7 @@ const Shop = () => {
           </div>
 
           {/* Product Grid */}
-          <div className="w-full absolute top-[30vh] md:top-[25vh] px-4 md:px-0">
+          <div className="w-full absolute top-[30vh] md:top-[40vh] px-4 md:px-0">
             <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center min-h-[100vh]">
               {isLoading ? (
                 Array.from({ length: 6 }).map((_, i) => (
@@ -190,7 +191,6 @@ const Shop = () => {
                     price={`$ ${product.price}`}
                     onClick={() => handleSetMyProductId(product._id)}
                     btnClick={() => setProductId(product._id)}
-                    className="w-[80vw] h-[60vh] sm:w-[90vw] md:w-[24vw] md:h-[55vh]"
                   />
                 ))
               ) : (

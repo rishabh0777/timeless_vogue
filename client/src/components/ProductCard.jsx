@@ -1,70 +1,55 @@
-import React, { useRef, useEffect } from 'react';
-import gsap from 'gsap';
+import React from 'react';
 import ProductCardSkeleton from '../loaderComponents/ProductCardSkeleton';
 
-const ProductCard = ({ className, item, price, btnTxt, onClick, btnClick, isLoading, btnStyle }) => {
-  const categoryInformationRef = useRef(null);
-
-  const hoverEffect = () => {
-    if (window.innerWidth >= 768) {
-      gsap.to(categoryInformationRef.current, {
-        height: "60%",
-        duration: 0.5,
-        ease: "power2.inOut",
-      });
-    }
-  };
-
-  const leaveEffect = () => {
-    if (window.innerWidth >= 768) {
-      gsap.to(categoryInformationRef.current, {
-        height: "0%",
-        duration: 0.5,
-        ease: "power2.inOut",
-      });
-    }
-  };
-
-  useEffect(() => {
-    // On small screens, show info by default
-    if (window.innerWidth < 768 && categoryInformationRef.current) {
-      categoryInformationRef.current.style.height = '60%';
-    }
-  }, []);
-
+const ProductCard = ({
+  className,
+  item,
+  price,
+  btnTxt,
+  onClick,
+  btnClick,
+  isLoading,
+  btnStyle,
+}) => {
   if (isLoading) return <ProductCardSkeleton className={className} />;
 
   return (
     <div
-      className={`bg-zinc-900 w-[90vw] sm:w-[70vw] h-[50vh] md:w-[25vw] aspect-[3/4] cursor-pointer overflow-hidden relative flex flex-col justify-end ${className}`}
-      onMouseEnter={hoverEffect}
-      onMouseLeave={leaveEffect}
+      className={`group relative overflow-hidden rounded-2xl shadow-md bg-white transition-transform hover:scale-[1.02] duration-300 ease-in-out w-[90vw] sm:w-[80vw] md:w-[25vw] h-[70vh] sm:pb-5 md:pb-10 ${className}`}
     >
-      {/* Background Image (static positioned) */}
-      <img
-        onClick={onClick}
-        loading="lazy"
-        className="w-full h-full object-cover"
-        src={item.image}
-        alt={item.title}
-      />
-
-      {/* Information Section */}
-      <div
-        ref={categoryInformationRef}
-        className="w-full h-0 md:h-0 bg-white/10 backdrop-blur-md absolute z-[12] bottom-0 flex flex-col justify-center items-center text-center px-4 text-white overflow-hidden md:transition-all"
-      >
-        <h2 className="text-lg font-semibold uppercase">{item.title}</h2>
-        <p className="text-sm opacity-80 mt-2">{item.description}</p>
+      {/* Larger Image */}
+      <div className="h-[68%] w-full overflow-hidden">
+        <img
+          src={item.image}
+          alt={item.title}
+          loading="lazy"
+          onClick={onClick}
+          className="w-full h-full object-cover cursor-pointer transition-transform group-hover:scale-105 duration-500 ease-in-out"
+        />
       </div>
 
-      {/* Button */}
-      <button
-        onClick={btnClick}
-        className={`px-6 md:py-3 sm:py-4 sm:w-[70%] md:w-[60%] bg-white text-black absolute z-50 left-1/2 bottom-[1vh] transform -translate-x-1/2 rounded-full text-sm font-medium hover:bg-gray-200 transition-all`}
-      >
-        {btnTxt} <span className="text-green-500">{price}</span>
-      </button>
+      {/* Info */}
+      <div className="h-[32%] w-full bg-white p-5 flex flex-col justify-between">
+        <div className="flex flex-col gap-1 flex-grow">
+          <h2 className="text-xl font-serif font-semibold text-zinc-900 truncate">
+            {item.title}
+          </h2>
+          <div className='w-full h-[6vh]'>
+            <p className="text-[2.8vw] md:text-[1vw] text-zinc-600 line-clamp-2">
+              {item.description}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-3">
+          <button
+            onClick={btnClick}
+            className={`w-full bg-zinc-800 text-white text-base font-medium py-3 px-6 rounded-full hover:bg-zinc-800 transition-all ${btnStyle}`}
+          >
+            {btnTxt} <span className="text-green-400">{price}</span>
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
