@@ -96,9 +96,10 @@ const DataProvider = ({ children }) => {
     const fetchData = async () => {
       if (isLoggedIn) {
         try {
-          const response = await axios.get(`${url}/api/v1/products/cart/${user._id}`);
+          const response = await axios.get(`${url}/api/v1/products/cart/${user?._id}`);
           setCart(response.data.data.cart);
           setCartLength(response.data.data.cart.items.length);
+          console.log(response)
         } catch (error) {
           // console.err(err);
           throw error
