@@ -19,7 +19,7 @@ const ProductInfo = () => {
       navigate("/login");
       return;
     }
-
+ 
     const cartData = {
       userId: user?._id,
       productId: id

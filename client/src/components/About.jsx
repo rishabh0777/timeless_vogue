@@ -12,7 +12,7 @@ const About = () => {
         title: 'PREMIUM MENSWEAR',
         description:
           'We offer a wide range of premium clothing for men, carefully curated to enhance your style and confidence.',
-      },
+      }, 
       {
         id: 2,
         title: 'OUR IDENTITY',

@@ -6,7 +6,7 @@ const EmailVerification = () => {
   const navigate = useNavigate();
   const url = import.meta.env.VITE_API_BASE_URL
 
-
+ 
   const verifyUser = async () => {
     try {
       // Get the token from the URL query parameters

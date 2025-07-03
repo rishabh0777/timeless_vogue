@@ -24,7 +24,7 @@ const TopItems = () => {
     isLoggedIn,
     setIsLoggedIn
   };
-
+ 
   const addItemToCart = async () => {
     if (!user?._id || !productId) return;
     const cartData = {

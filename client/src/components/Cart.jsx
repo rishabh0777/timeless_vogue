@@ -14,7 +14,7 @@ const Cart = () => {
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
   const { addresses, setAddresses, selectedAddress, setSelectedAddress } = useContext(AddressContext);
   const user = JSON.parse(localStorage.getItem("user"));
-
+ 
   const [loading, setLoading] = useState(false);
   const [addressId, setAddressId] = useState("");
   const [isLoading, setIsLoading] = useState(true);

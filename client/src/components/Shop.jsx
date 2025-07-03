@@ -12,7 +12,7 @@ const Shop = () => {
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
-
+ 
   const [myProducts, setMyProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [productId, setProductId] = useState(null);

@@ -9,7 +9,7 @@ const Card = ({
   description,
   price,
   isLoading,
-  onClick,
+  onClick, 
   btnClick,
 }) => {
   if (isLoading) return <CardSkeleton className={className} />;

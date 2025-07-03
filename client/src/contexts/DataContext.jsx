@@ -19,7 +19,7 @@ export const addCart = async ({ userId, productId }) => {
   }
 };
 
-
+ 
 
 // function to fetch cart data
 export const fetchData = async (info) => {

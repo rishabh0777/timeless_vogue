@@ -16,7 +16,7 @@ const Signup = () => {
 
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
+ 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 800);
     return () => clearTimeout(timer);

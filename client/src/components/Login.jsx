@@ -11,7 +11,7 @@ const Login = () => {
   const [password, handlePasswordChange] = useInput("");
   const url = import.meta.env.VITE_API_BASE_URL
 
-
+ 
   const [loading, setLoading] = useState(false);     // Login submission loader
   const [isLoading, setIsLoading] = useState(true);  // Page skeleton loader
 

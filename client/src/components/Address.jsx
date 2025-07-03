@@ -21,7 +21,7 @@ const Address = () => {
     state: "",
     pincode: "",
     country: "",
-  });
+  }); 
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");

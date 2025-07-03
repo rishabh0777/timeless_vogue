@@ -16,7 +16,7 @@ const Payment = () => {
 
   const totalAmount = cart.items.reduce(
     (acc, item) => acc + item.productId.price * item.quantity,
-    0
+    0 
   );
   const selectedAddr = addresses.find((a) => a._id === selectedAddress);
 

@@ -16,7 +16,7 @@ const Order = () => {
       await cancelOrder(id);
       await fetchMyOrders();
     }
-  };
+  }; 
 
   return (
     <div className="min-h-screen px-4 sm:px-8 md:px-12 py-10 mt-[10vh]">

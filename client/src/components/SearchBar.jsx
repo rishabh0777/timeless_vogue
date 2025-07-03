@@ -11,7 +11,7 @@ const SearchBar = ({className}) => {
   // Normalize product list
   const productList = Array.isArray(products?.data) ? products.data : products;
 
- 
+  
 
   const handleChange = (e) => {
     const value = e.target.value;

@@ -12,7 +12,7 @@ const ProductCard = ({
   btnStyle,
 }) => {
   if (isLoading) return <ProductCardSkeleton className={className} />;
-
+ 
   return (
     <div
       className={`group relative overflow-hidden rounded-2xl shadow-md bg-white transition-transform hover:scale-[1.02] duration-300 ease-in-out w-[90vw] sm:w-[80vw] md:w-[25vw] h-[70vh] sm:pb-5 md:pb-10 ${className}`}
