@@ -81,7 +81,7 @@ const DataProvider = ({ children }) => {
   useEffect(() => {
     const getProductData = async () => {
       try {
-        const response = await axios.get("/api/v1/products");
+        const response = await axios.get(`${url}/api/v1/products`);
         setProducts(response.data);
       } catch (err) {
         // console.log(err);
@@ -96,7 +96,7 @@ const DataProvider = ({ children }) => {
     const fetchData = async () => {
       if (isLoggedIn) {
         try {
-          const response = await axios.get(`/api/v1/products/cart/${user._id}`);
+          const response = await axios.get(`${url}/api/v1/products/cart/${user._id}`);
           setCart(response.data.data.cart);
           setCartLength(response.data.data.cart.items.length);
         } catch (error) {
