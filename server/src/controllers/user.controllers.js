@@ -164,12 +164,14 @@ const login = asyncHandler(async (req, res)=>{
 }) 
 
     const logout = asyncHandler(async (req, res)=>{
+        // get user from req
         // clear cookie
-        //delete refresh token
+        // delete refresh token
+        const user = req.user?._id;
         await User.findByIdAndUpdate(
-               new mongoose.Types.ObjectId(req.user?._id),
+               user,
                 {$set: {
-                    refreshToken: 1
+                    refreshToken: ""
                 }},
                 {new: true}
             )

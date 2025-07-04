@@ -17,7 +17,7 @@ const getProducts = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, products, "Products fetched successfully"));
 });
- 
+
 
 //Add item to Cart
 
@@ -64,7 +64,10 @@ const getCart = asyncHandler(async (req, res, next) => {
   }
 
   try {
-    const cart = await Cart.findOne({ userId }).populate("items.productId");
+    const cart = await Cart.findOne({ userId }).populate({
+      path: "items.productId",
+      model: "Product",
+    });
 
     if (!cart) {
       return next(new ApiError(404, "Cart not found"));
@@ -80,7 +83,8 @@ const getCart = asyncHandler(async (req, res, next) => {
         new ApiResponse(200, { cart, totalPrice }, "Cart fetched successfully")
       );
   } catch (error) {
-    return next(new ApiError(500, "Internal server error"));
+  console.error("🔥 Error in getCart:", error);
+  return next(new ApiError(500, error.message || "Internal server error"));
   }
 });
 
