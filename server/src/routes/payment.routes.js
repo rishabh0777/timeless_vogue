@@ -17,6 +17,6 @@ router.get('/get-key', verifyJWT, (req, res) => {
 router.route('/create-order').post(verifyJWT, createPaymentOrder)
 router.route('/verify-payment').post(verifyJWT, verifyPayment)
 
-export default router;
+export default router; 
 
  

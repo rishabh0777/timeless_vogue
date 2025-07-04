@@ -11,7 +11,8 @@ export const addCart = async ({ userId, productId }) => {
     const response = await axios.post(`${url}/api/v1/products/cart`, {
       userId,
       productId,
-    });
+    }, { withCredentials: true });
+
     return response.data;
   } catch (error) {
     // console.log(`unable to add item in cart: ${error}`)
@@ -19,13 +20,15 @@ export const addCart = async ({ userId, productId }) => {
   }
 };
 
- 
+
 
 // function to fetch cart data
 export const fetchData = async (info) => {
   if (info.isLoggedIn) {
-    try { 
-      const response = await axios.get(`${url}/api/v1/products/cart/${info.userId}`);
+    try {
+      const response = await axios.get(`${url}/api/v1/products/cart/${info.userId}`, {
+  withCredentials: true
+});
       info.setCart(response.data.data.cart);
       info.setCartLength(response.data.data.cart.items.length);
     } catch (error) {
@@ -41,9 +44,13 @@ export const fetchData = async (info) => {
 export const removeItem = async ({ userId, productId }) => {
   try {
     const response = await axios.delete(
-      `${url}/api/v1/products/cart/${userId}/remove-cart-item`,
-      { data: { productId } }
-    );
+  `${url}/api/v1/products/cart/${userId}/remove-cart-item`,
+  {
+    data: { productId },
+    withCredentials: true,
+  }
+);
+
     // console.log(response);
     return response.data;
   } catch (error) {
@@ -53,18 +60,19 @@ export const removeItem = async ({ userId, productId }) => {
 };
 
 export const decreaseCartQuantity = async (userId, productId) => {
-    try {
-      const response = await axios.put(`${url}/api/v1/products/cart/decrease-quantity`, {
-        userId,
-        productId,
-      });
-      setCart(response.data.data.cart);
-      setCartLength(response.data.data.cart.items.length);
-    } catch (error) {
-      // console.log(error);
-      throw error
-    }
+  try {
+    const response = await axios.put(`${url}/api/v1/products/cart/decrease-quantity`, {
+  userId,
+  productId,
+}, { withCredentials: true });
+
+    setCart(response.data.data.cart);
+    setCartLength(response.data.data.cart.items.length);
+  } catch (error) {
+    // console.log(error);
+    throw error
   }
+}
 
 
 const DataProvider = ({ children }) => {
@@ -90,13 +98,15 @@ const DataProvider = ({ children }) => {
     };
     getProductData();
   }, []);
- 
+
 
   useEffect(() => {
     const fetchData = async () => {
       if (isLoggedIn) {
         try {
-          const response = await axios.get(`${url}/api/v1/products/cart/${user?._id}`);
+          const response = await axios.get(`${url}/api/v1/products/cart/${user?._id}`, {
+            withCredentials: true
+          });
           setCart(response.data.data.cart);
           setCartLength(response.data.data.cart.items.length);
           console.log(response)
@@ -112,13 +122,13 @@ const DataProvider = ({ children }) => {
     fetchData();
   }, [isLoggedIn, setIsLoggedIn, setCart]);
 
- 
 
-  
+
+
 
   return (
     <DataContext.Provider
-      value={{ products, setCart, cart, cartLength, setCartLength, myProductId, setMyProductId}}
+      value={{ products, setCart, cart, cartLength, setCartLength, myProductId, setMyProductId }}
     >
       {children}
     </DataContext.Provider>

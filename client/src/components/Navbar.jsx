@@ -33,27 +33,30 @@ const Navbar = () => {
     if (!isLoggedIn) navigate('/login');
   };
 
-  const handleLogout = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post(`${url}/api/v1/user/logout`);
-      if (response?.status === 200 || response?.status === 201) {
-        optionRef.current.classList.add("hidden");
-        optionRef.current.classList.remove("flex");
-        localStorage.removeItem('user');
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        setIsLoggedIn(false);
-        if (!user) setCart({});
-        navigate('/');
-      } else {
-        alert('Something went wrong!');
-      }
-    } catch (error) {
-      // console.error(error);
-      throw error
+ const handleLogout = async (e) => {
+  e.preventDefault();
+  try {
+    const response = await axios.post(`${url}/api/v1/user/logout`, {}, {
+      withCredentials: true
+    });
+
+    if (response?.status === 200 || response?.status === 201) {
+      optionRef.current.classList.add("hidden");
+      optionRef.current.classList.remove("flex");
+      localStorage.removeItem('user');
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      setIsLoggedIn(false);
+      if (!user) setCart({});
+      navigate('/');
+    } else {
+      alert('Something went wrong!');
     }
-  };
+  } catch (error) {
+    console.error('Logout Error:', error);
+  }
+};
+
 
   if (isLoading) return <NavbarSkeleton />;
 

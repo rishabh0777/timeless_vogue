@@ -34,6 +34,8 @@ export const OrderProvider = ({ children }) => {
         cartItems,
         totalAmount,
         shippingAddress,
+      },{
+        withCredentials: true
       });
 
       if (response.data?.data) {
@@ -54,7 +56,11 @@ export const OrderProvider = ({ children }) => {
     setOrderLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`${url}/api/v1/orders/my`);
+      const response = await axios.get(`${url}/api/v1/orders/my`,
+        {
+        withCredentials: true
+      }
+      );
       setOrders(response.data?.data || []);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to fetch orders");
@@ -68,7 +74,11 @@ export const OrderProvider = ({ children }) => {
     setOrderLoading(true);
     setError(null);
     try {
-      const response = await axios.put(`${url}/api/v1/orders/cancel/${orderId}`);
+      const response = await axios.put(`${url}/api/v1/orders/cancel/${orderId}`
+        ,{
+        withCredentials: true
+      }
+      );
       // Refresh orders after cancellation
       await fetchMyOrders();
       return response.data?.data;
