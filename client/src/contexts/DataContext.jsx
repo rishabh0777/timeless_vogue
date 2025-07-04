@@ -102,6 +102,10 @@ const DataProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchData = async () => {
+      const user = JSON.parse(localStorage.getItem("user"))
+      if(!user){
+        console.log('user not found')
+      }
       if (isLoggedIn) {
         try {
           const response = await axios.get(`${url}/api/v1/products/cart/${user?._id}`, {

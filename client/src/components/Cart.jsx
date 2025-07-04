@@ -30,11 +30,17 @@ const Cart = () => {
   };
 
   const fetchAddresses = async () => {
-    if (user) {
+  if (user) {
+    try {
       const addr = await fetchAddress();
-      setAddresses(Array.isArray(addr.data) ? addr.data : []);
+      console.log("📦 Address response:", addr);
+      setAddresses(Array.isArray(addr?.data) ? addr.data : []);
+    } catch (error) {
+      console.error("❌ Error fetching address:", error);
+      setAddresses([]); // fallback to empty array
     }
-  };
+  }
+};
 
   useEffect(() => {
     const fetchInitial = async () => {

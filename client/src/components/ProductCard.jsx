@@ -15,12 +15,12 @@ const ProductCard = ({
  
   return (
     <div
-      className={`group relative overflow-hidden rounded-2xl shadow-md bg-white transition-transform hover:scale-[1.02] duration-300 ease-in-out w-[90vw] sm:w-[80vw] md:w-[25vw] h-[70vh] sm:pb-5 md:pb-10 ${className}`}
+      className={`group relative overflow-hidden rounded-2xl shadow-md bg-white transition-transform hover:scale-[1.02] duration-300 ease-in-out w-[90vw] tab:w-[60vw] sm:w-[80vw] md:w-[25vw] h-[70vh] sm:pb-5 md:pb-10 ${className}`}
     >
       {/* Larger Image */}
       <div className="h-[68%] w-full overflow-hidden">
         <img
-          src={item.image}
+          src={item.image} 
           alt={item.title}
           loading="lazy"
           onClick={onClick}
@@ -35,7 +35,7 @@ const ProductCard = ({
             {item.title}
           </h2>
           <div className='w-full h-[6vh]'>
-            <p className="text-[2.8vw] md:text-[1vw] text-zinc-600 line-clamp-2">
+            <p className="text-[2.8vw] md:text-[1vw] tab:text-[1.5vw] text-zinc-600 line-clamp-2">
               {item.description}
             </p>
           </div>

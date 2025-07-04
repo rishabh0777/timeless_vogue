@@ -8,6 +8,9 @@ export const addAddress = async (formData) => {
   try {
     const response = await axios.post(
       `${url}/api/v1/address/add`,
+      {
+        withCredentials: true
+      },
       formData);
     return response;
   } catch (err) {
@@ -19,12 +22,10 @@ export const addAddress = async (formData) => {
  
 export const fetchAddress = async () => {
   try {
-    const token = localStorage.getItem("token");
-    const response = await axios.get(`${url}/api/v1/address/get`, {
-      headers: {
-        Authorization: `Bearer ${token}`
+    const response = await axios.get(`${url}/api/v1/address/get`,{
+        withCredentials: true
       },
-    });
+    );
 
     return response.data;
   } catch (error) {
@@ -44,10 +45,9 @@ export const updateAddress = async (id, formData) => {
 
   try {
     const response = await axios.put(`${url}/api/v1/address/update/${id}`, formData, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        withCredentials: true
       },
-    });
+    );
     return response; // ✅ Return actual response, not the function itself
   } catch (error) {
     // console.log("Error while updating address:", error);
@@ -57,13 +57,11 @@ export const updateAddress = async (id, formData) => {
 
 export const removeAddress = async (id) => {
   try {
-    const token = localStorage.getItem("token");
-    const response = await axios.delete(`${url}/api/v1/address/delete`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await axios.delete(`${url}/api/v1/address/delete`,{
+        withCredentials: true
       },
-      data: { id }, // ✅ Send ID in request body
-    });
+      {data: { id }}, // ✅ Send ID in request body
+    );
     return response;
   } catch (error) {
     // console.error("Failed to delete address", error);

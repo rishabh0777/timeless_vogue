@@ -86,7 +86,7 @@ const TopItems = () => {
   };
 
   return (
-    <div className="w-full sm:min-h-[120svh] md:min-h-[200vh] relative overflow-hidden sm:pt-[18vh] md:pt-[35vh]">
+    <div className="w-full sm:min-h-[110svh] md:min-h-[200vh] relative overflow-hidden sm:pt-[8vh] md:pt-[35vh]">
       <div className="w-[90%] min-h-[150vh] absolute md:top-[25vh] left-1/2 transform -translate-x-1/2 rounded-xl">
         <h1 className="md:text-[4vw] sm:text-[7vw] text-center py-2">Signature Collection</h1>
 
@@ -103,7 +103,6 @@ const TopItems = () => {
                 btnTxt="Add to cart"
                 btnClick={() => setProductId(arrival._id)}
                 onClick={() => handleSetMyProductId(arrival._id)}
-                
               />
             ))
           ) : (
@@ -129,7 +128,7 @@ const TopItems = () => {
                 btnTxt="Add to cart"
                 btnClick={() => setProductId(arrival._id)}
                 onClick={() => handleSetMyProductId(arrival._id)}
-                className="min-w-[75vw] snap-center"
+                className="tab:min-w-[50vw] sm:min-w-[75vw] snap-center"
               />
             ))
           ) : (

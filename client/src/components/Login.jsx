@@ -6,12 +6,12 @@ import LoginSkeleton from '../loaderComponents/LoginSkeleton';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setIsLoggedIn } = useContext(AuthContext); 
+  const { setIsLoggedIn } = useContext(AuthContext);
   const [username, handleUsernameChange] = useInput("");
   const [password, handlePasswordChange] = useInput("");
   const url = import.meta.env.VITE_API_BASE_URL
 
- 
+
   const [loading, setLoading] = useState(false);     // Login submission loader
   const [isLoading, setIsLoading] = useState(true);  // Page skeleton loader
 
@@ -27,12 +27,18 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${url}/api/v1/user/login`, { username, password });
+      const response = await axios.post(`${url}/api/v1/user/login`,
+        { username, password },
+        {
+          withCredentials: true
+        }
+      );
       if (response?.status === 200 || response?.status === 201) {
         const { accessToken, refreshToken, user } = response.data.data;
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
         localStorage.setItem("user", JSON.stringify(user));
+
         setIsLoggedIn(true);
         navigate('/');
       } else {
@@ -59,7 +65,7 @@ const Login = () => {
           <div className="w-[90%] md:w-[80%] flex justify-between items-center mb-[5vh]">
             <h1 className="font-bold md:text-[1.3vw] text-[4vw]">Log in</h1>
             <p className="md:text-[1.2vw] text-[3vw]">
-              Don't have an account? 
+              Don't have an account?
               <span onClick={() => navigate('/Signup')} className="font-bold underline cursor-pointer"> Signup</span>
             </p>
           </div>
@@ -78,9 +84,8 @@ const Login = () => {
             />
             <button
               type="submit"
-              className={`bg-zinc-900 text-white font-bold md:w-[40%] cursor-pointer sm:w-[60vw] md:py-2 py-3 rounded-full mb-[4vh] ${
-                loading ? 'opacity-70 cursor-not-allowed' : ''
-              }`}
+              className={`bg-zinc-900 text-white font-bold md:w-[40%] cursor-pointer sm:w-[60vw] md:py-2 py-3 rounded-full mb-[4vh] ${loading ? 'opacity-70 cursor-not-allowed' : ''
+                }`}
               disabled={loading}
             >
               {loading ? 'Logging in...' : 'Log in'}

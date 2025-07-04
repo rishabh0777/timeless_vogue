@@ -93,8 +93,8 @@ export const getSingleOrder = asyncHandler(async (req, res) => {
  * @access  Private
  */
 export const cancelOrder = asyncHandler(async (req, res) => {
-  const userId = req.user._id;
-  const { id } = req.params;
+  const userId = req?.user?._id;
+  const { id } = req?.params;
 
   const order = await Order.findOne({ _id: id, userId });
 

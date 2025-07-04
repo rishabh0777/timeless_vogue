@@ -71,24 +71,24 @@ export const OrderProvider = ({ children }) => {
 
   // ✅ Cancel an Order
   const cancelOrder = async (orderId) => {
-    setOrderLoading(true);
-    setError(null);
-    try {
-      const response = await axios.put(`${url}/api/v1/orders/cancel/${orderId}`
-        ,{
-        withCredentials: true
-      }
-      );
-      // Refresh orders after cancellation
-      await fetchMyOrders();
-      return response.data?.data;
-    } catch (err) {
-      setError(err.response?.data?.message || "Cancel failed");
-      return null;
-    } finally {
-      setOrderLoading(false);
-    }
-  };
+  setOrderLoading(true);
+  setError(null);
+  try {
+    const response = await axios.put(
+      `${url}/api/v1/orders/cancel/${orderId}`,
+      {}, // ✅ empty body
+      { withCredentials: true } // ✅ config
+    );
+    await fetchMyOrders(); // refresh list
+    return response.data?.data;
+  } catch (err) {
+    setError(err.response?.data?.message || "Cancel failed");
+    return null;
+  } finally {
+    setOrderLoading(false);
+  }
+};
+
 
   return (
     <OrderContext.Provider
