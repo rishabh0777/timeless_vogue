@@ -35,7 +35,7 @@ const Dashboard = () => {
               <div className='w-[50vw] py-4 z-[10] absolute top-[20%] left-[5%] flex flex-col gap-5'>
                 <h1 className="text-white sm:text-[7.5vw] md:text-[8vw] lg:text-[7vw] leading-none whitespace-none ">Timeless Vogue</h1>
               <p className='text-white sm:text-[2.6vw] md:text-[1.9vw] lg:text-[1.8vw] whitespace-none'>Unparalleled Sophistication, Endless <br /> Elelegance - Welcome to Timeless Vogue.</p>
-              <button onClick={() => navigate('/shop')} className='sm:w-[20vw] text-white bg-zinc-800 sm:text-[1.8vw] tab:text-[1.6vw] md:text-[1.2vw] lg:text-[1.2vw] sm:px-4 sm:py-2 tab:px-3 tab:py-2 md:px-6 md:py-3 sm:py-3 rounded-lg hover:bg-zinc-900 transition-all whitespace-nowrap'>Discover Elegance</button>
+              <button onClick={() => navigate('/shop')} className='sm:w-[23vw] flex justify-center items-center text-white bg-zinc-800 sm:text-[2.2vw] tab:text-[1.6vw] md:text-[1.2vw] lg:text-[1.2vw] sm:px-5 sm:py-2 tab:px-3 tab:py-2 md:px-6 md:py-3 sm:py-3 rounded-lg hover:bg-zinc-900 transition-all whitespace-nowrap'>Discover Elegance</button>
               </div>
             </div>
             <SearchBar className="tab:hidden" />
