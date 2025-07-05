@@ -32,14 +32,18 @@ export const PaymentProvider = ({ children }) => {
     });
   };
 
-  // ✅ Initiate Payment
+  // ✅ Initiate Payment 
   const initiatePayment = async ({ totalAmount, cartItems, selectedAddr }) => {
     const loaded = await loadRazorpayScript();
     if (!loaded) return alert("Razorpay SDK failed to load");
 
     try {
-      const keyRes = await axios.get(`${url}/api/v1/payments/get-key`, getAuthHeader());
-      const orderRes = await axios.post(`${url}/api/v1/payments/create-order`, {
+      const keyRes = await axios.get(`${url}/api/v1/payments/get-key`,{
+        withCredentials: true
+      }, getAuthHeader());
+      const orderRes = await axios.post(`${url}/api/v1/payments/create-order`,{
+        withCredentials: true
+      }, {
         amount: totalAmount,
       }, getAuthHeader());
 
@@ -118,7 +122,9 @@ export const PaymentProvider = ({ children }) => {
 
     try {
       const { data } = await axios.post(
-        `${url}/api/v1/payments/verify-payment`,
+        `${url}/api/v1/payments/verify-payment`,{
+          withCredentials: true
+        },
         {
           razorpay_order_id,
           razorpay_payment_id,

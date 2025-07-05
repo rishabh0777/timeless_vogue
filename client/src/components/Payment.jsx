@@ -78,7 +78,7 @@ const Payment = () => {
           disabled={!selectedAddr}
           className={`w-full py-3 rounded-md text-white font-semibold transition ${
             selectedAddr
-              ? "bg-green-600 hover:bg-green-700"
+              ? "bg-zinc-800 hover:bg-zinc-700"
               : "bg-zinc-400 cursor-not-allowed"
           }`}
         >
