@@ -12,12 +12,9 @@ export const PaymentProvider = ({ children }) => {
   const [paymentError, setPaymentError] = useState(null);
   const [invoiceUrl, setInvoiceUrl] = useState("");
   const { placeOrder } = useOrder();
-  const url = import.meta.env.VITE_API_BASE_URL
+  const url = import.meta.env.VITE_API_BASE_URL;
 
-
- 
- 
-
+  // ✅ Load Razorpay script
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
@@ -34,14 +31,17 @@ export const PaymentProvider = ({ children }) => {
     if (!loaded) return alert("Razorpay SDK failed to load");
 
     try {
-      const keyRes = await axios.get(`${url}/api/v1/payments/get-key`,{
-        withCredentials: true
+      // ✅ Get Razorpay key
+      const keyRes = await axios.get(`${url}/api/v1/payments/get-key`, {
+        withCredentials: true,
       });
-      const orderRes = await axios.post(`${url}/api/v1/payments/create-order`,{
-        withCredentials: true
-      }, {
-        amount: totalAmount,
-      });
+
+      // ✅ Create Razorpay order
+      const orderRes = await axios.post(
+        `${url}/api/v1/payments/create-order`,
+        { amount: totalAmount }, // body
+        { withCredentials: true } // config
+      );
 
       const key = keyRes.data.key;
       const order = orderRes.data.data;
@@ -52,7 +52,7 @@ export const PaymentProvider = ({ children }) => {
         currency: order.currency,
         name: "Timeless Vogue",
         description: "Order Payment",
-        order_id: order.id, 
+        order_id: order.id,
 
         handler: async function (response) {
           const invoice = await verifyPayment({
@@ -87,7 +87,7 @@ export const PaymentProvider = ({ children }) => {
 
         prefill: {
           name: selectedAddr.name,
-          email: "demo@example.com", // or fetch from user state
+          email: "demo@example.com",
           contact: selectedAddr.phone,
         },
 
@@ -99,8 +99,7 @@ export const PaymentProvider = ({ children }) => {
       const razorpay = new window.Razorpay(options);
       razorpay.open();
     } catch (error) {
-      // console.error("💥 initiatePayment error:", error.message);
-      throw error
+      throw error;
     }
   };
 
@@ -118,9 +117,7 @@ export const PaymentProvider = ({ children }) => {
 
     try {
       const { data } = await axios.post(
-        `${url}/api/v1/payments/verify-payment`,{
-          withCredentials: true
-        },
+        `${url}/api/v1/payments/verify-payment`,
         {
           razorpay_order_id,
           razorpay_payment_id,
@@ -128,7 +125,8 @@ export const PaymentProvider = ({ children }) => {
           address,
           cartItems,
           total,
-        }
+        }, // body
+        { withCredentials: true } // config
       );
 
       const invoice = data?.data?.invoiceUrl;
@@ -137,7 +135,6 @@ export const PaymentProvider = ({ children }) => {
     } catch (err) {
       const message = err.response?.data?.message || "Payment verification failed";
       setPaymentError(message);
-      // console.error("❌ verifyPayment:", message);
       return null;
     } finally {
       setPaymentLoading(false);
