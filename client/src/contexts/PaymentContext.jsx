@@ -14,7 +14,7 @@ export const PaymentProvider = ({ children }) => {
   const { placeOrder } = useOrder();
   const url = import.meta.env.VITE_API_BASE_URL;
 
-  // ✅ Load Razorpay script
+  // Load Razorpay SDK
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
@@ -25,22 +25,20 @@ export const PaymentProvider = ({ children }) => {
     });
   };
 
-  // ✅ Initiate Payment 
+  // ✅ Initiate Payment
   const initiatePayment = async ({ totalAmount, cartItems, selectedAddr }) => {
     const loaded = await loadRazorpayScript();
     if (!loaded) return alert("Razorpay SDK failed to load");
 
     try {
-      // ✅ Get Razorpay key
       const keyRes = await axios.get(`${url}/api/v1/payments/get-key`, {
         withCredentials: true,
       });
 
-      // ✅ Create Razorpay order
       const orderRes = await axios.post(
         `${url}/api/v1/payments/create-order`,
-        { amount: totalAmount }, // body
-        { withCredentials: true } // config
+        { amount: totalAmount },
+        { withCredentials: true }
       );
 
       const key = keyRes.data.key;
@@ -55,6 +53,9 @@ export const PaymentProvider = ({ children }) => {
         order_id: order.id,
 
         handler: async function (response) {
+          // ✅ Open blank tab early to avoid mobile popup block
+          const newTab = window.open("", "_blank");
+
           const invoice = await verifyPayment({
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
@@ -75,19 +76,20 @@ export const PaymentProvider = ({ children }) => {
             });
 
             if (newOrder) {
-              alert("✅ Order placed!");
-              window.open(invoice, "_blank");
+              newTab.location.href = invoice; // ✅ safe for mobile
             } else {
+              newTab.close(); // ❌ if something fails
               alert("❌ Order not placed.");
             }
           } else {
+            newTab.close(); // ❌ payment verification failed
             alert("❌ Payment verification failed.");
           }
         },
 
         prefill: {
           name: selectedAddr.name,
-          email: "demo@example.com",
+          email: "demo@example.com", // Optionally use real user email
           contact: selectedAddr.phone,
         },
 
@@ -99,6 +101,7 @@ export const PaymentProvider = ({ children }) => {
       const razorpay = new window.Razorpay(options);
       razorpay.open();
     } catch (error) {
+      console.error("💥 initiatePayment error:", error.message);
       throw error;
     }
   };
@@ -125,8 +128,10 @@ export const PaymentProvider = ({ children }) => {
           address,
           cartItems,
           total,
-        }, // body
-        { withCredentials: true } // config
+        },
+        {
+          withCredentials: true,
+        }
       );
 
       const invoice = data?.data?.invoiceUrl;

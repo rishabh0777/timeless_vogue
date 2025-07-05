@@ -76,9 +76,9 @@ const Payment = () => {
         <button
           onClick={createMyOrder}
           disabled={!selectedAddr}
-          className={`w-full py-3 rounded-md text-white font-semibold transition ${
+          className={`w-full py-3 rounded-md text-white font-semibold transition cursor-pointer ${
             selectedAddr
-              ? "bg-zinc-800 hover:bg-zinc-700"
+              ? "bg-zinc-800 hover:bg-zinc-500"
               : "bg-zinc-400 cursor-not-allowed"
           }`}
         >
