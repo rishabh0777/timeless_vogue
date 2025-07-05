@@ -16,11 +16,7 @@ export const PaymentProvider = ({ children }) => {
 
 
  
-  const getAuthHeader = () => ({
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-    },
-  });
+ 
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
@@ -40,12 +36,12 @@ export const PaymentProvider = ({ children }) => {
     try {
       const keyRes = await axios.get(`${url}/api/v1/payments/get-key`,{
         withCredentials: true
-      }, getAuthHeader());
+      });
       const orderRes = await axios.post(`${url}/api/v1/payments/create-order`,{
         withCredentials: true
       }, {
         amount: totalAmount,
-      }, getAuthHeader());
+      });
 
       const key = keyRes.data.key;
       const order = orderRes.data.data;
@@ -132,8 +128,7 @@ export const PaymentProvider = ({ children }) => {
           address,
           cartItems,
           total,
-        },
-        getAuthHeader()
+        }
       );
 
       const invoice = data?.data?.invoiceUrl;
