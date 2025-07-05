@@ -14,7 +14,7 @@ export const PaymentProvider = ({ children }) => {
   const { placeOrder } = useOrder();
   const url = import.meta.env.VITE_API_BASE_URL;
 
-  // Load Razorpay SDK
+  // ✅ Load Razorpay SDK
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
@@ -28,13 +28,15 @@ export const PaymentProvider = ({ children }) => {
   // ✅ Initiate Payment
   const initiatePayment = async ({ totalAmount, cartItems, selectedAddr }) => {
     const loaded = await loadRazorpayScript();
-    if (!loaded) return alert("Razorpay SDK failed to load");
+    if (!loaded) return alert("⚠ Razorpay SDK failed to load");
 
     try {
+      // Get Razorpay Key
       const keyRes = await axios.get(`${url}/api/v1/payments/get-key`, {
         withCredentials: true,
       });
 
+      // Create Razorpay Order
       const orderRes = await axios.post(
         `${url}/api/v1/payments/create-order`,
         { amount: totalAmount },
@@ -43,6 +45,13 @@ export const PaymentProvider = ({ children }) => {
 
       const key = keyRes.data.key;
       const order = orderRes.data.data;
+
+      // Pre-open tab to avoid mobile popup block
+      const newTab = window.open("", "_blank");
+      if (!newTab) {
+        alert("⚠ Please allow popups in your browser to view invoice.");
+        return;
+      }
 
       const options = {
         key,
@@ -53,9 +62,6 @@ export const PaymentProvider = ({ children }) => {
         order_id: order.id,
 
         handler: async function (response) {
-          // ✅ Open blank tab early to avoid mobile popup block
-          const newTab = window.open("", "_blank");
-
           const invoice = await verifyPayment({
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
@@ -76,20 +82,20 @@ export const PaymentProvider = ({ children }) => {
             });
 
             if (newOrder) {
-              newTab.location.href = invoice; // ✅ safe for mobile
+              newTab.location.href = invoice;
             } else {
-              newTab.close(); // ❌ if something fails
+              newTab.close();
               alert("❌ Order not placed.");
             }
           } else {
-            newTab.close(); // ❌ payment verification failed
+            newTab.close();
             alert("❌ Payment verification failed.");
           }
         },
 
         prefill: {
           name: selectedAddr.name,
-          email: "demo@example.com", // Optionally use real user email
+          email: "demo@example.com", // Replace with real email if available
           contact: selectedAddr.phone,
         },
 
@@ -102,11 +108,11 @@ export const PaymentProvider = ({ children }) => {
       razorpay.open();
     } catch (error) {
       console.error("💥 initiatePayment error:", error.message);
-      throw error;
+      alert("❌ Failed to initiate payment.");
     }
   };
 
-  // ✅ Verify Payment
+  // ✅ Verify Payment and Generate Invoice
   const verifyPayment = async ({
     razorpay_order_id,
     razorpay_payment_id,
