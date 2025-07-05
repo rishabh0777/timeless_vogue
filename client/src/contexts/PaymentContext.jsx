@@ -28,7 +28,10 @@ export const PaymentProvider = ({ children }) => {
   // ✅ Initiate Payment
   const initiatePayment = async ({ totalAmount, cartItems, selectedAddr }) => {
     const loaded = await loadRazorpayScript();
-    if (!loaded) return alert("⚠ Razorpay SDK failed to load");
+    if (!loaded) {
+      alert("⚠ Razorpay SDK failed to load");
+      return;
+    }
 
     try {
       // Get Razorpay Key
@@ -43,15 +46,8 @@ export const PaymentProvider = ({ children }) => {
         { withCredentials: true }
       );
 
-      const key = keyRes.data.key;
-      const order = orderRes.data.data;
-
-      // Pre-open tab to avoid mobile popup block
-      const newTab = window.open("", "_blank");
-      if (!newTab) {
-        alert("⚠ Please allow popups in your browser to view invoice.");
-        return;
-      }
+      const key = keyRes?.data?.key;
+      const order = orderRes?.data?.data;
 
       const options = {
         key,
@@ -82,13 +78,11 @@ export const PaymentProvider = ({ children }) => {
             });
 
             if (newOrder) {
-              newTab.location.href = invoice;
+              window.location.href = invoice; // ✅ Open invoice in same tab
             } else {
-              newTab.close();
               alert("❌ Order not placed.");
             }
           } else {
-            newTab.close();
             alert("❌ Payment verification failed.");
           }
         },
@@ -135,16 +129,15 @@ export const PaymentProvider = ({ children }) => {
           cartItems,
           total,
         },
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
 
       const invoice = data?.data?.invoiceUrl;
       setInvoiceUrl(invoice);
       return invoice;
     } catch (err) {
-      const message = err.response?.data?.message || "Payment verification failed";
+      const message =
+        err.response?.data?.message || "Payment verification failed";
       setPaymentError(message);
       return null;
     } finally {
