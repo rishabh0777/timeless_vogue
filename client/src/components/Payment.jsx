@@ -2,11 +2,14 @@ import React, { useContext } from "react";
 import { DataContext } from "../contexts/DataContext";
 import { AddressContext } from "../contexts/AddressContext";
 import { PaymentContext } from "../contexts/PaymentContext";
+import {useNavigate} from "react-router-dom"
 
 const Payment = () => {
   const { cart } = useContext(DataContext);
   const { addresses, selectedAddress } = useContext(AddressContext);
   const { initiatePayment, paymentLoading } = useContext(PaymentContext);
+    const navigate = useNavigate()
+
 
   const totalAmount = cart.items.reduce(
     (acc, item) => acc + item.productId.price * item.quantity,
@@ -23,6 +26,7 @@ const Payment = () => {
         cartItems: cart.items,
         selectedAddr,
       });
+      navigate('/order')
     } catch (error) {
       alert("Payment failed. Check console.");
     }

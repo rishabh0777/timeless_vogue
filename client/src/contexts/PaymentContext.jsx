@@ -1,7 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import axios from "axios";
 import { load } from "@cashfreepayments/cashfree-js";
-import {useNavigate} from "react-router-dom"
 export const PaymentContext = createContext();
 export const usePayment = () => useContext(PaymentContext);
 
@@ -9,7 +8,6 @@ export const PaymentProvider = ({ children }) => {
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentError, setPaymentError] = useState(null);
   const url = import.meta.env.VITE_API_BASE_URL;
-  const navigate = useNavigate()
 
   const initiatePayment = async ({ totalAmount, cartItems, selectedAddr }) => {
     setPaymentLoading(true);
@@ -73,7 +71,6 @@ export const PaymentProvider = ({ children }) => {
         );
         if(!res) alert("order not created")
         alert("✅ Order placed and invoice generated!");
-      navigate('/order')
       } else {
         alert("❌ Payment failed or still pending.");
       }
