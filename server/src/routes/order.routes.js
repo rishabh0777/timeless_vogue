@@ -7,17 +7,17 @@ import {
   getAllOrders,
 } from "../controllers/order.controllers.js";
 import { verifyJWT } from "../middlewares/auth.middlewares.js";
+// import { isAdmin } from "../middlewares/role.middlewares.js"; // Optional if needed
 
 const router = express.Router();
 
-// User routes
-router.route("/create").post( verifyJWT, createOrder);
-router.route("/my").get(verifyJWT, getMyOrders);
-router.route("/:id").get(verifyJWT, getSingleOrder);
-router.route("/cancel/:id").put(verifyJWT, cancelOrder);
+// 🛒 User Routes
+router.post("/create", verifyJWT, createOrder);
+router.get("/my", verifyJWT, getMyOrders);
+router.get("/:id", verifyJWT, getSingleOrder);
+router.put("/cancel/:id", verifyJWT, cancelOrder);
 
-// Admin (optional)
-router.route("/admin/all").get(verifyJWT, getAllOrders); // add isAdmin check if needed
+// 🛠️ Admin Route (optional)
+router.get("/admin/all", verifyJWT /*, isAdmin*/, getAllOrders);
 
 export default router;
- 

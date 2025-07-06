@@ -1,88 +1,103 @@
-import Razorpay from "razorpay";
+import { Cashfree, CFEnvironment } from "cashfree-pg";
 import crypto from "crypto";
-import { generateInvoicePDF } from "../utils/generateInvoice.js";
-import asyncHandler from "../utils/asyncHandler.js";
-import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
+import { ApiError } from "../utils/apiError.js";
+import asyncHandler from "../utils/asyncHandler.js";
+import axios from "axios";
 
-// ✅ Razorpay instance
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_SECRET,
-});
+// ✅ Set Cashfree credentials
+Cashfree.XClientId = process.env.CF_APP_ID;
+Cashfree.XClientSecret = process.env.CF_SECRET_KEY;
+Cashfree.XEnvironment = CFEnvironment.SANDBOX;
 
-// ✅ Create Razorpay Order
+const generateOrderId = () => {
+  const uniqueId = crypto.randomBytes(16).toString("hex");
+  const hash = crypto.createHash("sha256").update(uniqueId).digest("hex");
+  return hash.substring(0, 12);
+};
+
+// ✅ Create Payment Order
 export const createPaymentOrder = asyncHandler(async (req, res) => {
   const { amount } = req.body;
 
-  if (!amount || amount <= 0) {
-    throw new ApiError(400, "Invalid amount");
+  if (!amount || isNaN(amount)) {
+    throw new ApiError(400, "Valid amount is required");
   }
- 
-  const options = {
-    amount: amount * 100, // in paise
-    currency: "INR",
-    receipt: `receipt_${Date.now()}`,
+
+  const orderId = generateOrderId();
+
+  const request = {
+    order_id: orderId,
+    order_amount: amount,
+    order_currency: "INR",
+    customer_details: {
+      customer_id: "customer123",
+      customer_email: "customer123@gmail.com",
+      customer_phone: "9876543210",
+    },
   };
 
-  const order = await razorpay.orders.create(options);
-
-  if (!order) {
-    throw new ApiError(500, "Failed to create Razorpay order");
-  }
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, order, "Payment order created"));
-});
-
-// ✅ Verify Razorpay Payment
-export const verifyPayment = asyncHandler(async (req, res) => {
-  const {
-    razorpay_order_id,
-    razorpay_payment_id,
-    razorpay_signature,
-    address,
-    cartItems,
-    total,
-  } = req.body;
-
-  const secret = process.env.RAZORPAY_SECRET;
-  if (!secret) throw new ApiError(500, "Missing Razorpay secret");
-
-  const expectedSignature = crypto
-    .createHmac("sha256", secret)
-    .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-    .digest("hex");
-
-  if (expectedSignature !== razorpay_signature) {
-    throw new ApiError(400, "Invalid Razorpay signature");
-  }
-
-  // Simplify cart items for invoice
-  const simplifiedItems = cartItems.map((item) => ({
-    name: item.productId?.title || item.name || "Unnamed Product",
-    price: item.productId?.price || item.price || 0,
-    quantity: item.quantity || 1,
-  }));
-
-  // ✅ Generate Invoice PDF
   try {
-    const invoicePath = await generateInvoicePDF({
-      orderId: razorpay_order_id,
-      paymentId: razorpay_payment_id,
-      address,
-      cartItems: simplifiedItems,
-      total,
-    });
+    const response = await Cashfree.PGCreateOrder("2023-08-01", request);
 
-    const invoiceUrl = `${req.protocol}://${req.get("host")}/${invoicePath}`;
+    if (!response?.data?.payment_session_id) {
+      throw new ApiError(500, "Failed to receive payment session from Cashfree");
+    }
 
     return res.status(200).json(
-      new ApiResponse(200, { invoiceUrl }, "Payment verified and invoice generated")
+      new ApiResponse(
+        200,
+        {
+          order_id: orderId,
+          order_token: response.data.payment_session_id,
+          order_url: response.data.payment_link,
+        },
+        "Payment order created successfully"
+      )
     );
-  } catch (err) {
-    console.error("Invoice generation failed:", err.message);
-    throw new ApiError(500, "Invoice generation failed");
+  } catch (error) {
+    const msg = error?.response?.data?.message || error.message;
+    throw new ApiError(500, msg);
+  }
+});
+
+// ✅ Verify Payment Status
+export const verifyPayment = asyncHandler(async (req, res) => {
+  const { order_id } = req.body;
+
+  if (!order_id) {
+    throw new ApiError(400, "order_id is required");
+  }
+
+  try {
+    const response = await axios.get(
+      `https://sandbox.cashfree.com/pg/orders/${order_id}`,
+      {
+        headers: {
+          "x-client-id": process.env.CF_APP_ID,
+          "x-client-secret": process.env.CF_SECRET_KEY,
+          "x-api-version": "2022-09-01",
+        },
+      }
+    );
+
+    const status = response.data?.order_status;
+    const amount = response.data?.order_amount;
+
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          order_id,
+          payment_status: status,
+          order_amount: amount,
+          payment_id: order_id, // Use order_id as fallback if payment_id not provided
+        },
+        "Payment verified successfully"
+      )
+    );
+  } catch (error) {
+    const msg = error?.response?.data?.message || error.message;
+    throw new ApiError(500, msg);
   }
 });

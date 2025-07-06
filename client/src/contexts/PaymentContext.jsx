@@ -1,158 +1,90 @@
-import React, { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import axios from "axios";
-import { useOrder } from "./OrderContext";
-
-// Create Context
+import { load } from "@cashfreepayments/cashfree-js";
+import {useNavigate} from "react-router-dom"
 export const PaymentContext = createContext();
 export const usePayment = () => useContext(PaymentContext);
 
-// Provider
 export const PaymentProvider = ({ children }) => {
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentError, setPaymentError] = useState(null);
-  const [invoiceUrl, setInvoiceUrl] = useState("");
-  const { placeOrder } = useOrder();
   const url = import.meta.env.VITE_API_BASE_URL;
+  const navigate = useNavigate()
 
-  // ✅ Load Razorpay SDK
-  const loadRazorpayScript = () => {
-    return new Promise((resolve) => {
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-  };
-
-  // ✅ Initiate Payment
   const initiatePayment = async ({ totalAmount, cartItems, selectedAddr }) => {
-    const loaded = await loadRazorpayScript();
-    if (!loaded) {
-      alert("⚠ Razorpay SDK failed to load");
-      return;
-    }
+    setPaymentLoading(true);
+    setPaymentError(null);
 
     try {
-      // Get Razorpay Key
-      const keyRes = await axios.get(`${url}/api/v1/payments/get-key`, {
-        withCredentials: true,
-      });
+      localStorage.setItem("cartItems", JSON.stringify(cartItems));
+      localStorage.setItem("selectedAddress", JSON.stringify(selectedAddr));
 
-      // Create Razorpay Order
-      const orderRes = await axios.post(
+      const cashfree = await load({ mode: "sandbox" }); // "production" for live
+
+      const res = await axios.post(
         `${url}/api/v1/payments/create-order`,
         { amount: totalAmount },
         { withCredentials: true }
       );
 
-      const key = keyRes?.data?.key;
-      const order = orderRes?.data?.data;
+      const { order_token, order_id } = res.data.data;
+      if (!order_token || !order_id) {
+        throw new Error("Failed to create payment session");
+      }
 
-      const options = {
-        key,
-        amount: order.amount,
-        currency: order.currency,
-        name: "Timeless Vogue",
-        description: "Order Payment",
-        order_id: order.id,
+      await cashfree.checkout({
+        paymentSessionId: order_token,
+        redirectTarget: "_modal",
+      });
 
-        handler: async function (response) {
-          const invoice = await verifyPayment({
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-            address: selectedAddr,
-            cartItems,
-            total: totalAmount,
-          });
-
-          if (invoice) {
-            const newOrder = await placeOrder({
-              razorpayOrderId: response.razorpay_order_id,
-              razorpayPaymentId: response.razorpay_payment_id,
-              invoiceUrl: invoice,
-              cartItems,
-              totalAmount,
-              shippingAddress: selectedAddr,
-            });
-
-            if (newOrder) {
-              window.location.href = invoice; // ✅ Open invoice in same tab
-            } else {
-              alert("❌ Order not placed.");
-            }
-          } else {
-            alert("❌ Payment verification failed.");
-          }
-        },
-
-        prefill: {
-          name: selectedAddr.name,
-          email: "demo@example.com", // Replace with real email if available
-          contact: selectedAddr.phone,
-        },
-
-        theme: {
-          color: "#6366f1",
-        },
-      };
-
-      const razorpay = new window.Razorpay(options);
-      razorpay.open();
-    } catch (error) {
-      console.error("💥 initiatePayment error:", error.message);
-      alert("❌ Failed to initiate payment.");
-    }
-  };
-
-  // ✅ Verify Payment and Generate Invoice
-  const verifyPayment = async ({
-    razorpay_order_id,
-    razorpay_payment_id,
-    razorpay_signature,
-    address,
-    cartItems,
-    total,
-  }) => {
-    setPaymentLoading(true);
-    setPaymentError(null);
-
-    try {
-      const { data } = await axios.post(
-        `${url}/api/v1/payments/verify-payment`,
-        {
-          razorpay_order_id,
-          razorpay_payment_id,
-          razorpay_signature,
-          address,
-          cartItems,
-          total,
-        },
-        { withCredentials: true }
-      );
-
-      const invoice = data?.data?.invoiceUrl;
-      setInvoiceUrl(invoice);
-      return invoice;
+      await verifyAndCreateOrder(order_id);
     } catch (err) {
-      const message =
-        err.response?.data?.message || "Payment verification failed";
-      setPaymentError(message);
-      return null;
+      setPaymentError(err.message || "Something went wrong");
+      throw err;
     } finally {
       setPaymentLoading(false);
     }
   };
 
+  const verifyAndCreateOrder = async (order_id) => {
+    try {
+      const verifyRes = await axios.post(
+        `${url}/api/v1/payments/verify-payment`,
+        { order_id },
+        { withCredentials: true }
+      );
+
+      const payment = verifyRes.data.data;
+
+      if (payment.payment_status === "PAID") {
+        const cartItems = JSON.parse(localStorage.getItem("cartItems"));
+        const shippingAddress = JSON.parse(localStorage.getItem("selectedAddress"));
+
+       const res= await axios.post(
+          `${url}/api/v1/orders/create`,
+          {
+            cartItems,
+            shippingAddress,
+            totalAmount: payment.order_amount,
+            paymentId: payment.payment_id,
+            orderId: payment.order_id,
+          },
+          { withCredentials: true }
+        );
+        if(!res) alert("order not created")
+        alert("✅ Order placed and invoice generated!");
+      navigate('/order')
+      } else {
+        alert("❌ Payment failed or still pending.");
+      }
+    } catch (err) {
+      alert("Verification or order placement failed");
+    }
+  };
+
   return (
     <PaymentContext.Provider
-      value={{
-        initiatePayment,
-        paymentLoading,
-        paymentError,
-        invoiceUrl,
-      }}
+      value={{ initiatePayment, paymentLoading, paymentError }}
     >
       {children}
     </PaymentContext.Provider>

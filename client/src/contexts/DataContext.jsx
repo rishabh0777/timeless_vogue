@@ -104,7 +104,8 @@ const DataProvider = ({ children }) => {
     const fetchData = async () => {
       const user = JSON.parse(localStorage.getItem("user"))
       if(!user){
-        console.log('user not found')
+        // console.log('user not found')
+        return
       }
       if (isLoggedIn) {
         try {
@@ -113,7 +114,7 @@ const DataProvider = ({ children }) => {
           });
           setCart(response.data.data.cart);
           setCartLength(response.data.data.cart.items.length);
-          console.log(response)
+          // console.log(response)
         } catch (error) {
           // console.err(err);
           throw error

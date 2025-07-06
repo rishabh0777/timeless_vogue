@@ -1,41 +1,76 @@
-// utils/generateInvoice.js
-import PDFDocument from "pdfkit"
-import fs from "fs"
-import path from "path"
+import PDFDocument from "pdfkit";
+import fs from "fs";
+import path from "path";
+
+// Ensure the invoices folder exists
+const invoiceDir = path.join("public", "invoices");
+if (!fs.existsSync(invoiceDir)) {
+  fs.mkdirSync(invoiceDir, { recursive: true });
+}
 
 export const generateInvoicePDF = ({ orderId, paymentId, address, cartItems, total }) => {
-  const doc = new PDFDocument();
+  return new Promise((resolve, reject) => {
+    const doc = new PDFDocument({ margin: 40 });
 
-  const filename = `invoice-${Date.now()}.pdf`;
-  const filePath = path.join("invoices", filename);
+    const filename = `invoice-${Date.now()}.pdf`;
+    const filePath = path.join(invoiceDir, filename);
+    const writeStream = fs.createWriteStream(filePath);
 
-  // Ensure invoices directory exists
-  if (!fs.existsSync("invoices")) {
-    fs.mkdirSync("invoices");
-  } 
+    doc.pipe(writeStream);
 
-  const stream = fs.createWriteStream(filePath);
-  doc.pipe(stream);
+    // Header
+    doc
+      .fontSize(24)
+      .fillColor("#333")
+      .text("INVOICE", { align: "center" })
+      .moveDown(1);
 
-  doc.fontSize(22).text("INVOICE", { align: "center" });
-  doc.moveDown();
-  doc.fontSize(14).text(`Order ID: ${orderId}`);
-  doc.text(`Payment ID: ${paymentId}`);
-  doc.text(`Date: ${new Date().toLocaleString()}`);
+    doc
+      .fontSize(12)
+      .fillColor("#000")
+      .text(`Order ID: ${orderId}`)
+      .text(`Payment ID: ${paymentId}`)
+      .text(`Date: ${new Date().toLocaleString()}`)
+      .moveDown(1);
 
-  doc.moveDown().fontSize(16).text("Shipping Address:");
-  doc.fontSize(12).text(`${address.name}, ${address.addressLine}`);
-  doc.text(`${address.city}, ${address.state} - ${address.pincode}, ${address.country}`);
-  doc.text(`Phone: ${address.phone}`);
+    // Address
+    doc
+      .fontSize(14)
+      .fillColor("#000")
+      .text("Shipping Address", { underline: true })
+      .moveDown(0.5);
 
-  doc.moveDown().fontSize(16).text("Items:");
-  cartItems.forEach((item, index) => {
-    doc.fontSize(12).text(`${index + 1}. ${item.name} x ${item.quantity} = ₹${item.price * item.quantity}`);
+    doc
+      .fontSize(12)
+      .text(`${address.name}`)
+      .text(`${address.addressLine}`)
+      .text(`${address.city}, ${address.state} - ${address.pincode}`)
+      .text(`${address.country}`)
+      .text(`Phone: ${address.phone}`)
+      .moveDown(1);
+
+    // Cart Items Table Header
+    doc
+      .fontSize(14)
+      .fillColor("#000")
+      .text("Items", { underline: true })
+      .moveDown(0.5);
+
+    cartItems.forEach((item, index) => {
+      const line = `${index + 1}. ${item.name} x ${item.quantity} = ₹${item.price * item.quantity}`;
+      doc.fontSize(12).text(line);
+    });
+
+    doc.moveDown(1);
+
+    // Total
+    doc
+      .fontSize(14)
+      .text(`Total Amount: ₹${total}`, { align: "right", bold: true });
+
+    doc.end();
+
+    writeStream.on("finish", () => resolve(filename));
+    writeStream.on("error", reject);
   });
-
-  doc.moveDown().fontSize(14).text(`Total: ₹${total}`, { align: "right" });
-
-  doc.end();
-
-  return filePath;
 };

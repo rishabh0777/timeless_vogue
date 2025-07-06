@@ -1,43 +1,36 @@
 import React, { useContext } from "react";
-import axios from "axios";
 import { DataContext } from "../contexts/DataContext";
 import { AddressContext } from "../contexts/AddressContext";
-import {PaymentContext} from "../contexts/PaymentContext";
+import { PaymentContext } from "../contexts/PaymentContext";
 
 const Payment = () => {
   const { cart } = useContext(DataContext);
   const { addresses, selectedAddress } = useContext(AddressContext);
-  const {initiatePayment} = useContext(PaymentContext);
- 
-
-
-
- 
+  const { initiatePayment, paymentLoading } = useContext(PaymentContext);
 
   const totalAmount = cart.items.reduce(
     (acc, item) => acc + item.productId.price * item.quantity,
-    0 
+    0
   );
   const selectedAddr = addresses.find((a) => a._id === selectedAddress);
 
- const createMyOrder = async () => {
-  if (!selectedAddr) return;
+  const handlePayment = async () => {
+    if (!selectedAddr) return alert("Please select an address");
 
-  try { 
-    await initiatePayment({
-    totalAmount,
-    cartItems: cart.items,
-    selectedAddr
-  });
-  } catch (error) {
-    // console.error("Payment initiation failed:", error);
-    throw error
-  }
-};
+    try {
+      await initiatePayment({
+        totalAmount,
+        cartItems: cart.items,
+        selectedAddr,
+      });
+    } catch (error) {
+      alert("Payment failed. Check console.");
+    }
+  };
 
   return (
-    <div className="w-full px-4 py-8 flex justify-center">
-      <div className="w-full max-w-2xl bg-white rounded-lg shadow-lg p-6 border border-zinc-200">
+    <div className="w-full px-4 py-8 flex flex-col items-center">
+      <div className="w-full max-w-2xl bg-white rounded-lg shadow-lg p-6 border border-zinc-200 mb-8">
         <h2 className="text-2xl font-semibold mb-4">🧾 Order Summary</h2>
 
         <div className="mb-6 space-y-4">
@@ -74,17 +67,16 @@ const Payment = () => {
         </div>
 
         <button
-          onClick={createMyOrder}
-          disabled={!selectedAddr}
-          className={`w-full py-3 rounded-md text-white font-semibold transition cursor-pointer ${
-            selectedAddr
-              ? "bg-zinc-800 hover:bg-zinc-500"
-              : "bg-zinc-400 cursor-not-allowed"
-          }`}
+          onClick={handlePayment}
+          disabled={!selectedAddr || paymentLoading}
+          className={`w-full py-3 rounded-md text-white font-semibold transition ${selectedAddr ? "bg-zinc-800 hover:bg-zinc-600" : "bg-zinc-400 cursor-not-allowed"}`}
         >
-          Proceed to Pay ₹{totalAmount}
+          {paymentLoading ? "Processing..." : `Proceed to Pay ₹${totalAmount}`}
         </button>
       </div>
+
+      {/* ✅ Drop-in Checkout container if needed */}
+      <div id="cashfree-dropin-container"></div>
     </div>
   );
 };

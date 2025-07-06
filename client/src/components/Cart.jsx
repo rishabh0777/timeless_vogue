@@ -33,7 +33,7 @@ const Cart = () => {
   if (user) {
     try {
       const addr = await fetchAddress();
-      console.log("📦 Address response:", addr);
+      // console.log("📦 Address response:", addr);
       setAddresses(Array.isArray(addr?.data) ? addr.data : []);
     } catch (error) {
       console.error("❌ Error fetching address:", error);
