@@ -1,50 +1,62 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 const EmailVerification = () => {
   const navigate = useNavigate();
-  const url = import.meta.env.VITE_API_BASE_URL
+  const url = import.meta.env.VITE_API_BASE_URL;
+  const [isVerifying, setIsVerifying] = useState(true);
+  const [error, setError] = useState("");
 
- 
   const verifyUser = async () => {
     try {
-      // Get the token from the URL query parameters
       const queryParams = new URLSearchParams(window.location.search);
       const token = queryParams.get('token');
 
       if (!token) {
-        alert('Invalid or missing token.');
+        setError("Missing or invalid token.");
+        toast.error("Missing or invalid token.");
+        setIsVerifying(false);
         return;
       }
- 
-      // Send a GET request to the backend to verify the email
-      const response = await axios.get(
-        `${url}/api/v1/user/verify-email?token=${token}`
-      );
+
+      const response = await axios.get(`${url}/api/v1/user/verify-email?token=${token}`);
 
       if (response.status === 201) {
-        alert('Email verified successfully!');
-        navigate('/login'); // Redirect to the login page after successful verification
+        toast.success("Email verified successfully!");
+        setTimeout(() => navigate('/login'), 2000);
       } else {
-        alert('Failed to verify email. Please try again.');
+        toast.error("Verification failed. Please try again.");
+        setIsVerifying(false);
       }
-    } catch (error) {
-      // console.error('Error verifying email:', error);
-      alert('An error occurred while verifying your email. Please try again.');
-      navigate('/Login');
+    } catch (err) {
+      toast.error("Error verifying email. Try again.");
+      setError("An error occurred while verifying your email.");
+      setIsVerifying(false);
     }
   };
 
+  useEffect(() => {
+    verifyUser(); // Automatically trigger on load
+  }, []);
+
   return (
-    <div className="w-full h-screen text-center p-12 text-[4vw] flex flex-col justify-center items-center ">
-      <h1>Click here to verify your email</h1>
-      <button
-        onClick={verifyUser}
-        className="px-2 py-1 text-[1.2vw] bg-zinc-700 rounded-lg mt-8 text-white"
-      >
-        Verify
-      </button>
+    <div className="w-full h-screen text-center p-12 text-[4vw] flex flex-col justify-center items-center">
+      {isVerifying ? (
+        <h1>Verifying your email...</h1>
+      ) : (
+        <>
+          <h1 className="mb-4">Click below to retry email verification</h1>
+          {error && <p className="text-red-500 mb-4 text-[1.2vw]">{error}</p>}
+          <button
+            onClick={verifyUser}
+            className="px-4 py-2 text-[1.2vw] bg-zinc-700 rounded-lg text-white hover:bg-zinc-800"
+          >
+            Verify Email
+          </button>
+        </>
+      )}
     </div>
   );
 };

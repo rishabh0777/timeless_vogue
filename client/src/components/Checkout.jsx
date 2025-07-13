@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 const Checkout = () => {
   const [addresses, setAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
-  const url = import.meta.env.VITE_API_BASE_URL
+  const url = import.meta.env.VITE_API_BASE_URL;
+
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?._id;
 
   const [form, setForm] = useState({
     name: "",
@@ -14,16 +18,14 @@ const Checkout = () => {
     state: "",
     pincode: "",
     country: "",
-  });  
+  });
 
-  const totalAmount = 1499; // Replace with real cart total
-  const userId = "user-id-from-auth"; // Replace with real logged-in user ID
+  const totalAmount = 1499;
   const cartItems = [
     { name: "Premium Shirt", quantity: 2, price: 598 },
     { name: "Classic Jeans", quantity: 1, price: 699 },
   ];
 
-  // Load Razorpay script
   const loadRazorpayScript = () =>
     new Promise((resolve) => {
       const script = document.createElement("script");
@@ -33,15 +35,18 @@ const Checkout = () => {
       document.body.appendChild(script);
     });
 
-  // Load existing addresses
   const fetchAddresses = async () => {
-    const { data } = await axios.get(`${url}/api/address/all/${userId}`);
-    setAddresses(data.data);
+    try {
+      const { data } = await axios.get(`${url}/api/address/all/${userId}`);
+      setAddresses(data.data);
+    } catch (err) {
+      toast.error("Failed to fetch addresses");
+    }
   };
 
   useEffect(() => {
-    fetchAddresses();
-  }, []);
+    if (userId) fetchAddresses();
+  }, [userId]);
 
   const handleInputChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -60,63 +65,82 @@ const Checkout = () => {
         pincode: "",
         country: "",
       });
+      toast.success("Address added successfully");
       fetchAddresses();
     } catch (err) {
-      alert(err?.response?.data?.message || "Failed to add address");
+      toast.error(err?.response?.data?.message || "Failed to add address");
     }
   };
 
   const deleteAddress = async (id) => {
-    if (window.confirm("Delete this address?")) {
+    const confirm = window.confirm("Delete this address?");
+    if (!confirm) return;
+
+    try {
       await axios.delete(`${url}/api/address/delete/${id}`);
+      toast.success("Address deleted");
       fetchAddresses();
       if (selectedAddressId === id) setSelectedAddressId(null);
+    } catch {
+      toast.error("Failed to delete address");
     }
   };
 
   const handlePayment = async () => {
     const selectedAddress = addresses.find((a) => a._id === selectedAddressId);
-    if (!selectedAddress) return alert("Please select an address");
+    if (!selectedAddress) return toast.error("Please select an address");
 
     const res = await loadRazorpayScript();
-    if (!res) return alert("Razorpay failed to load");
+    if (!res) return toast.error("Razorpay SDK failed to load");
 
-    const { data } = await axios.post(`${url}/api/payment/create-order`, {
-      amount: totalAmount,
-    });
+    try {
+      const { data } = await axios.post(`${url}/api/payment/create-order`, {
+        amount: totalAmount,
+      });
 
-    const { id: order_id, currency, amount } = data.data;
+      const { id: order_id, currency, amount } = data.data;
 
-    const keyRes = await axios.get(`${url}/api/v1/payment/get-key`);
-    const options = {
-      key: keyRes, // Replace with your key
-      amount,
-      currency,
-      name: "Timeless Vogue",
-      description: "Payment",
-      order_id,
-      handler: async function (response) {
-        const verifyRes = await axios.post(`${url}/api/payment/verify`, {
-          razorpay_order_id: response.razorpay_order_id,
-          razorpay_payment_id: response.razorpay_payment_id,
-          razorpay_signature: response.razorpay_signature,
-          address: selectedAddress,
-          cartItems,
-          total: totalAmount,
-        });
+      const keyRes = await axios.get(`${url}/api/v1/payment/get-key`);
+      const key = keyRes?.data?.key;
 
-        const invoiceUrl = verifyRes.data.data.invoiceUrl;
-        window.open(invoiceUrl, "_blank");
-      },
-      prefill: {
-        name: selectedAddress.name,
-        contact: selectedAddress.phone,
-      },
-      theme: { color: "#000000" },
-    };
+      const options = {
+        key,
+        amount,
+        currency,
+        name: "Timeless Vogue",
+        description: "Payment",
+        order_id,
+        handler: async function (response) {
+          try {
+            const verifyRes = await axios.post(`${url}/api/payment/verify`, {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              address: selectedAddress,
+              cartItems,
+              total: totalAmount,
+            });
 
-    const paymentObject = new window.Razorpay(options);
-    paymentObject.open();
+            toast.success("Payment successful!");
+
+            const invoiceUrl = verifyRes.data.data.invoiceUrl;
+            window.open(invoiceUrl, "_blank");
+          } catch (err) {
+            toast.error("Payment verification failed");
+          }
+        },
+        prefill: {
+          name: selectedAddress.name,
+          contact: selectedAddress.phone,
+        },
+        theme: { color: "#000000" },
+      };
+
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
+    } catch (error) {
+      toast.error("Error initiating payment");
+    }
   };
 
   return (

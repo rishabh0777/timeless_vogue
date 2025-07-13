@@ -19,6 +19,8 @@ import AuthProvider from './contexts/AuthContext';
 import AddressProvider from './contexts/AddressContext';
 import { OrderProvider } from "./contexts/OrderContext";
 import { PaymentProvider } from "./contexts/PaymentContext";
+import { Toaster } from 'react-hot-toast';
+
 
 const App = () => {
   return (
@@ -29,6 +31,30 @@ const App = () => {
             <PaymentProvider>
               <Router>
                 <ScrollToTop />
+                <ScrollToTop />
+  <Toaster
+    position="top-right"
+    toastOptions={{
+      style: {
+        background: '#1a1a1a',
+        color: '#fff',
+        borderRadius: '6px',
+        fontSize: '0.9rem',
+      },
+      success: {
+        iconTheme: {
+          primary: '#22c55e',
+          secondary: '#fff',
+        },
+      },
+      error: {
+        iconTheme: {
+          primary: '#ef4444',
+          secondary: '#fff',
+        },
+      },
+    }}
+  />
                 <Routes>
                   <Route path='/' element={<Layout />}>
                     <Route index element={<Dashboard />} />

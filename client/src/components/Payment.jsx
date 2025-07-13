@@ -2,14 +2,15 @@ import React, { useContext } from "react";
 import { DataContext } from "../contexts/DataContext";
 import { AddressContext } from "../contexts/AddressContext";
 import { PaymentContext } from "../contexts/PaymentContext";
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Payment = () => {
   const { cart } = useContext(DataContext);
   const { addresses, selectedAddress } = useContext(AddressContext);
   const { initiatePayment, paymentLoading } = useContext(PaymentContext);
-    const navigate = useNavigate()
-
+  const navigate = useNavigate();
 
   const totalAmount = cart.items.reduce(
     (acc, item) => acc + item.productId.price * item.quantity,
@@ -18,7 +19,10 @@ const Payment = () => {
   const selectedAddr = addresses.find((a) => a._id === selectedAddress);
 
   const handlePayment = async () => {
-    if (!selectedAddr) return alert("Please select an address");
+    if (!selectedAddr) {
+      toast.error("Please select a delivery address");
+      return;
+    }
 
     try {
       await initiatePayment({
@@ -26,16 +30,18 @@ const Payment = () => {
         cartItems: cart.items,
         selectedAddr,
       });
-      navigate('/order')
+      toast.success("Payment successful! Redirecting to Orders...");
+      navigate("/order");
     } catch (error) {
-      alert("Payment failed. Check console.");
+      console.error("Payment Error:", error);
+      toast.error("Payment failed! Please try again.");
     }
   };
 
   return (
-    <div className="w-full px-4 py-8 flex flex-col items-center">
+    <div className="w-full px-4 py-8 flex flex-col items-center mt-[10vh]">
       <div className="w-full max-w-2xl bg-white rounded-lg shadow-lg p-6 border border-zinc-200 mb-8">
-        <h2 className="text-2xl font-semibold mb-4">🧾 Order Summary</h2>
+        <h2 className="text-2xl font-semibold mb-6">🧾 Order Summary</h2>
 
         <div className="mb-6 space-y-4">
           {cart.items.map((item) => (
@@ -73,13 +79,16 @@ const Payment = () => {
         <button
           onClick={handlePayment}
           disabled={!selectedAddr || paymentLoading}
-          className={`w-full py-3 rounded-md text-white font-semibold transition ${selectedAddr ? "bg-zinc-800 hover:bg-zinc-600" : "bg-zinc-400 cursor-not-allowed"}`}
+          className={`w-full py-3 rounded-md text-white font-semibold transition ${
+            selectedAddr && !paymentLoading
+              ? "bg-zinc-800 hover:bg-zinc-700"
+              : "bg-zinc-400 cursor-not-allowed"
+          }`}
         >
           {paymentLoading ? "Processing..." : `Proceed to Pay ₹${totalAmount}`}
         </button>
       </div>
 
-      {/* ✅ Drop-in Checkout container if needed */}
       <div id="cashfree-dropin-container"></div>
     </div>
   );

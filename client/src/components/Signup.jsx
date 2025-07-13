@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useInput } from '../contexts/AuthContext';
 import axios from 'axios';
 import SignupSkeleton from '../loaderComponents/SignupSkeleton';
+import { toast } from 'react-toastify';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -11,12 +12,11 @@ const Signup = () => {
   const [fullname, handleFullnameChange] = useInput("");
   const [email, handleEmailChange] = useInput("");
   const [password, handlePasswordChange] = useInput("");
-  const url = import.meta.env.VITE_API_BASE_URL
-
+  const url = import.meta.env.VITE_API_BASE_URL;
 
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
- 
+
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 800);
     return () => clearTimeout(timer);
@@ -31,17 +31,21 @@ const Signup = () => {
     try {
       const response = await axios.post(`${url}/api/v1/user/register`, userData);
       if (response?.status === 200 || response?.status === 201) {
-        alert('Check your mailbox for verification email');
+        toast.success('Check your mailbox for verification email');
         navigate('/login');
       } else {
-        alert('Something went wrong!');
+        toast.error('Something went wrong!');
       }
     } catch (error) {
-      // console.error(error);
-      alert(error.response?.data?.message || "Signup failed");
+      toast.error(error.response?.data?.message || "Signup failed");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    toast.info("Google login not implemented. Add Firebase/OAuth handler.");
+    // Place your Firebase/OAuth logic here.
   };
 
   if (isLoading) return <SignupSkeleton />;
@@ -49,21 +53,21 @@ const Signup = () => {
   return (
     <div className="relative authBg w-full h-screen flex justify-center items-center">
       <div className="flex sm:flex-col md:flex-row h-[90%] w-[90%] text-white">
-        
-        {/* Left Text Section */}
+
+        {/* Left Section */}
         <div className="md:h-full md:w-1/2 flex justify-center items-center">
           <h1 className="md:text-[7vw] md:leading-[7vw] text-[12vw] leading-[12vw] md:text-left sm:text-center">
             Join the elite <br />experience
           </h1>
         </div>
 
-        {/* Signup Form Section */}
+        {/* Signup Form */}
         <div className="h-full md:w-1/2 w-full flex flex-col items-center justify-center px-5 py-6">
           <div className="w-[90%] md:w-[80%] flex justify-between items-center mb-[5vh]">
             <h1 className="font-bold md:text-[1.3vw] text-[4vw]">Sign up</h1>
             <p className="md:text-[1.2vw] text-[3vw]">
-              Already have an account? 
-              <span onClick={() => navigate('/login')} className="font-bold underline cursor-pointer"> Login</span>
+              Already have an account?{" "}
+              <span onClick={() => navigate('/login')} className="font-bold underline cursor-pointer">Login</span>
             </p>
           </div>
 
@@ -104,9 +108,10 @@ const Signup = () => {
               onChange={handlePasswordChange}
               disabled={loading}
             />
+
             <button
               type="submit"
-              className={`bg-zinc-900 text-white font-bold md:w-[40%] sm:w-[60vw] md:py-2 py-3 rounded-full mb-[4vh] cursor-pointer ${
+              className={`bg-zinc-900 text-white font-bold md:w-[40%] sm:w-[60vw] md:py-2 py-3 rounded-full mb-[2vh] cursor-pointer ${
                 loading ? 'opacity-70 cursor-not-allowed' : ''
               }`}
               disabled={loading}
@@ -114,17 +119,18 @@ const Signup = () => {
               {loading ? 'Creating Account...' : 'Create Account'}
             </button>
 
-            <div className="w-full flex justify-center items-center mb-[4vh]">
-              <div className="w-[30%] h-[0.2vh] bg-zinc-700"></div>
-              <p className="px-2 md:text-[1.2vw] text-[3vw]">or continue with</p>
-              <div className="w-[30%] h-[0.2vh] bg-zinc-700"></div>
-            </div>
-
-            <div className="md:text-[3vw] sm:text-[7vw] flex gap-4">
-              <i className="ri-google-fill cursor-pointer"></i>
-              <i className="ri-facebook-circle-fill cursor-pointer"></i>
-              <i className="ri-github-fill cursor-pointer"></i>
-            </div>
+            <button
+              type="button"
+              onClick={handleGoogleLogin}
+              className="bg-white text-black font-semibold md:w-[40%] sm:w-[60vw] md:py-2 py-3 rounded-full border border-zinc-300 flex items-center justify-center gap-2 hover:bg-zinc-100 transition"
+            >
+              <img
+                src="https://www.svgrepo.com/show/475656/google-color.svg"
+                alt="Google"
+                className="w-5 h-5"
+              />
+              Continue with Google
+            </button>
           </form>
         </div>
       </div>

@@ -7,6 +7,7 @@ import { AuthContext } from "../contexts/AuthContext";
 import { AddressContext } from "../contexts/AddressContext";
 import Payment from './Payment';
 import CartSkeleton from "../loaderComponents/CartSkeleton";
+import { toast } from "react-hot-toast"; // ✅ Import toast
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -14,12 +15,11 @@ const Cart = () => {
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
   const { addresses, setAddresses, selectedAddress, setSelectedAddress } = useContext(AddressContext);
   const user = JSON.parse(localStorage.getItem("user"));
- 
+
   const [loading, setLoading] = useState(false);
   const [addressId, setAddressId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const url = import.meta.env.VITE_API_BASE_URL
-
+  const url = import.meta.env.VITE_API_BASE_URL;
 
   const info = {
     userId: user?._id,
@@ -30,22 +30,26 @@ const Cart = () => {
   };
 
   const fetchAddresses = async () => {
-  if (user) {
-    try {
-      const addr = await fetchAddress();
-      // console.log("📦 Address response:", addr);
-      setAddresses(Array.isArray(addr?.data) ? addr.data : []);
-    } catch (error) {
-      console.error("❌ Error fetching address:", error);
-      setAddresses([]); // fallback to empty array
+    if (user) {
+      try {
+        const addr = await fetchAddress();
+        setAddresses(Array.isArray(addr?.data) ? addr.data : []);
+      } catch (error) {
+        toast.error("Failed to fetch addresses");
+        setAddresses([]);
+      }
     }
-  }
-};
+  };
 
   useEffect(() => {
     const fetchInitial = async () => {
-      await Promise.all([fetchData(info), fetchAddresses()]);
-      setIsLoading(false);
+      try {
+        await Promise.all([fetchData(info), fetchAddresses()]);
+      } catch {
+        toast.error("Error fetching cart or address data");
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchInitial();
   }, []);
@@ -54,10 +58,10 @@ const Cart = () => {
     setAddressId(id);
     try {
       await removeAddress(id);
+      toast.success("Address removed");
       fetchAddresses();
     } catch (error) {
-      // console.log(error);
-      throw error
+      toast.error("Failed to remove address");
     }
   };
 
@@ -66,17 +70,22 @@ const Cart = () => {
     try {
       await removeItem({ userId: user._id, productId: id });
       await fetchData(info);
+      toast.success("Item removed from cart");
     } catch (error) {
-      // console.error("Failed to remove item", error);
-      throw error
+      toast.error("Failed to remove item");
     }
     setLoading(false);
   };
 
   const increaseQuantity = async (id) => {
     setLoading(true);
-    await addCart({ userId: user._id, productId: id });
-    await fetchData(info);
+    try {
+      await addCart({ userId: user._id, productId: id });
+      await fetchData(info);
+      toast.success("Quantity increased");
+    } catch {
+      toast.error("Failed to increase quantity");
+    }
     setLoading(false);
   };
 
@@ -89,9 +98,9 @@ const Cart = () => {
         productId: id,
       });
       await fetchData(info);
+      toast.success("Quantity decreased");
     } catch (error) {
-      // console.error("Failed to decrease quantity", error);
-      throw error
+      toast.error("Failed to decrease quantity");
     }
     setLoading(false);
   };
@@ -109,7 +118,7 @@ const Cart = () => {
 
       {user ? cart?.items?.length > 0 ? (
         <>
-          {/* ✅ Headers */}
+          {/* Headers */}
           <div className="hidden md:grid grid-cols-5 font-semibold text-sm text-zinc-600 pb-3">
             <p className="col-span-2">Product</p>
             <p className="text-center">Price</p>
@@ -117,7 +126,7 @@ const Cart = () => {
             <p className="text-center">Subtotal</p>
           </div>
 
-          {/* ✅ Cart Items */}
+          {/* Cart Items */}
           {cart.items.map((item) => (
             <div key={item.productId._id} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center py-6 border-t border-zinc-200">
               <div className="col-span-2 flex gap-4 items-start sm:items-center">
@@ -133,15 +142,11 @@ const Cart = () => {
                 </div>
               </div>
 
-              {/* Price */}
               <div className="text-center text-sm sm:text-base">
-                <span className="md:hidden font-medium block mb-1">Price:</span>
                 ₹{item.productId.price}
               </div>
 
-              {/* Quantity */}
               <div className="flex flex-col justify-center items-center gap-1">
-                <span className="md:hidden font-medium mb-1">Quantity:</span>
                 <div className="flex items-center gap-2">
                   <button onClick={() => decreaseQuantity(item.productId._id, item.quantity)} className="px-2 py-1 bg-zinc-200 rounded">-</button>
                   <span>{item.quantity}</span>
@@ -149,9 +154,7 @@ const Cart = () => {
                 </div>
               </div>
 
-              {/* Subtotal */}
               <div className="text-center font-medium text-sm sm:text-base">
-                <span className="md:hidden font-medium block mb-1">Subtotal:</span>
                 ₹{(item.productId.price * item.quantity).toFixed(2)}
               </div>
             </div>
@@ -159,7 +162,6 @@ const Cart = () => {
 
           {loading && <p className="text-center text-sm text-zinc-500 mt-4">Updating cart...</p>}
 
-          {/* ✅ Total Amount */}
           <div className="mt-6 flex justify-end">
             <div className="w-full sm:w-[80%] md:w-[50%] lg:w-[30%] bg-zinc-100 rounded-lg p-4">
               <div className="flex justify-between text-lg font-semibold mb-2">
@@ -170,7 +172,7 @@ const Cart = () => {
             </div>
           </div>
 
-          {/* ✅ Address Section */}
+          {/* Address Section */}
           <div className="mt-10">
             <h2 className="text-xl font-semibold mb-4">Choose Delivery Address</h2>
             <div className="flex flex-wrap gap-5 justify-center">
@@ -208,7 +210,6 @@ const Cart = () => {
                 </div>
               ))}
 
-              {/* ✅ Add New Address Styled as Card */}
               {addresses.length < 3 && (
                 <div
                   onClick={() => navigate("/address")}
@@ -220,7 +221,7 @@ const Cart = () => {
             </div>
           </div>
 
-          {/* ✅ Payment Section */}
+          {/* Payment Section */}
           <div className="w-full mt-10">
             <Payment />
           </div>

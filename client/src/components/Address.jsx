@@ -3,14 +3,14 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { addAddress, updateAddress } from "../contexts/AddressContext";
 import AddressSkeleton from "../loaderComponents/AddressSkeleton";
+import { toast } from "react-hot-toast"; // ✅ Add this line
 
 const Address = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const editId = searchParams.get("edit");
   const user = JSON.parse(localStorage.getItem("user"));
-  const url = import.meta.env.VITE_API_BASE_URL
-
+  const url = import.meta.env.VITE_API_BASE_URL;
 
   const [formData, setFormData] = useState({
     userId: user?._id,
@@ -21,19 +21,15 @@ const Address = () => {
     state: "",
     pincode: "",
     country: "",
-  }); 
+  });
 
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [isLoading, setIsLoading] = useState(true); // show skeleton on every mount
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Always show skeleton for 1 sec
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1000);
 
-    // If editing, fetch address
     if (editId) {
       const fetchEditData = async () => {
         try {
@@ -42,8 +38,7 @@ const Address = () => {
             setFormData({ ...res.data.data, userId: user._id });
           }
         } catch (err) {
-          // console.error("Failed to fetch address", err);
-          setError("Unable to fetch address data.");
+          toast.error("Unable to fetch address data."); // ✅ Toast error
         }
       };
       fetchEditData();
@@ -65,16 +60,13 @@ const Address = () => {
     try {
       const myAddress = await addAddress(formData);
       if (myAddress?.data?.statusCode === 200) {
-        setSuccess("Address saved successfully!");
-        setError("");
+        toast.success("Address saved successfully!"); // ✅ Toast success
         navigate("/cart");
       } else {
-        setError("Failed to save address.");
-        setSuccess("");
+        toast.error("Failed to save address."); // ✅ Toast error
       }
     } catch (error) {
-      setError("Something went wrong while saving address.");
-      // console.error(error);
+      toast.error("Something went wrong while saving address."); // ✅ Toast error
     }
   };
 
@@ -83,15 +75,13 @@ const Address = () => {
     try {
       const updatedAddress = await updateAddress(editId, formData);
       if (updatedAddress?.data?.statusCode === 200) {
-        setSuccess("Address updated successfully!");
-        setError("");
+        toast.success("Address updated successfully!"); // ✅ Toast success
         navigate("/cart");
       } else {
-        setError("Failed to update address.");
+        toast.error("Failed to update address."); // ✅ Toast error
       }
     } catch (error) {
-      setError("Unable to update at this moment");
-      // console.log(error);
+      toast.error("Unable to update at this moment"); // ✅ Toast error
     }
   };
 
@@ -103,9 +93,6 @@ const Address = () => {
         <h1 className="text-2xl font-bold mb-6 text-center">
           {editId ? "Edit Address" : "Add New Address"}
         </h1>
-
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-        {success && <p className="text-green-600 mb-4">{success}</p>}
 
         <form onSubmit={editId ? updateMyAddress : addNewAddress} className="space-y-4">
           <div>

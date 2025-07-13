@@ -7,6 +7,8 @@ import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import ShopSkeleton from "../loaderComponents/ShopSkeleton";
 
+import { toast } from "react-toastify";
+
 const Shop = () => {
   const { products, setCart, setCartLength, setMyProductId } = useContext(DataContext);
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
@@ -34,13 +36,17 @@ const Shop = () => {
 
   const addItemToCart = async () => {
     if (!user?._id || !productId) return;
+
     const cartData = { userId: user._id, productId: productId };
+
     try {
       const data = await addCart(cartData);
-      if (data) await fetchData(info);
+      if (data) {
+        await fetchData(info);
+        toast.success("Item added to cart!");
+      }
     } catch (err) {
-      // console.error("Error adding to cart:", err);
-      throw err
+      toast.error("Failed to add item to cart");
     }
   };
 
@@ -53,19 +59,17 @@ const Shop = () => {
       let filteredProducts = selectedCategory === "All"
         ? [...products.data]
         : products.data.filter((product) =>
-          product.category.some(
-            (cat) => cat.toLowerCase() === selectedCategory.toLowerCase()
-          )
-        );
+            product.category.some(
+              (cat) => cat.toLowerCase() === selectedCategory.toLowerCase()
+            )
+          );
 
-      // Apply basic filter logic (you can expand this)
       if (selectedFilter === "price") {
         filteredProducts.sort((a, b) => a.price - b.price);
       } else if (selectedFilter === "newest") {
         filteredProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       }
 
-      // Bring searched item to top
       if (searchedProductId) {
         const index = filteredProducts.findIndex((p) => p._id === searchedProductId);
         if (index !== -1) {
@@ -105,7 +109,7 @@ const Shop = () => {
             <div className="max-w-[95%] md:max-w-[90%] xl:max-w-[1200px] mx-auto">
               <h1 className="md:text-[4vw] sm:text-[7vw] font-bold mb-2 sm:hidden md:flex">The Wardrobe</h1>
 
-              {/* Mobile: Unified dropdown */}
+              {/* Mobile Dropdown */}
               <div className="flex items-center justify-between md:hidden w-full px-2">
                 <h1 className="md:text-[4vw] sm:text-[7vw] font-bold md:hidden md:flex">The Wardrobe</h1>
 
@@ -124,9 +128,7 @@ const Shop = () => {
                 >
                   <optgroup label="Categories">
                     {["Filter", "Top Wear", "Bottom Wear", "Winter Wear", "Summer", "Informal", "Formal"].map((category) => (
-                      <option key={category} value={category}>
-                        {category}
-                      </option>
+                      <option key={category} value={category}>{category}</option>
                     ))}
                   </optgroup>
                   <optgroup label="Filters">
@@ -138,7 +140,7 @@ const Shop = () => {
                 </select>
               </div>
 
-              {/* Desktop: category & filter separated */}
+              {/* Desktop Filters */}
               <div className="hidden md:flex w-full justify-between items-center gap-3">
                 <div className="flex gap-3 text-[1vw] whitespace-nowrap px-1">
                   {["All", "Top Wear", "Bottom Wear", "Winter Wear", "Summer", "Informal", "Formal"].map((category) => (
@@ -149,9 +151,9 @@ const Shop = () => {
                         setIsLoading(true);
                       }}
                       className={`cursor-pointer px-2 py-1 rounded-md transition-all ${selectedCategory === category
-                          ? "font-bold underline underline-offset-4"
-                          : ""
-                        }`}
+                        ? "font-bold underline underline-offset-4"
+                        : ""
+                      }`}
                     >
                       {category.toUpperCase()}
                     </p>
