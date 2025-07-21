@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useInput } from '../contexts/AuthContext';
 import axios from 'axios';
 import SignupSkeleton from '../loaderComponents/SignupSkeleton';
-import { toast } from 'react-toastify';
+import { toast } from "react-hot-toast";
 
 const Signup = () => {
   const navigate = useNavigate();

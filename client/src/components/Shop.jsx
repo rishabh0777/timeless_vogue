@@ -6,8 +6,7 @@ import { DataContext, addCart, fetchData } from "../contexts/DataContext";
 import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import ShopSkeleton from "../loaderComponents/ShopSkeleton";
-
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 const Shop = () => {
   const { products, setCart, setCartLength, setMyProductId } = useContext(DataContext);

@@ -3,8 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { DataContext, addCart, fetchData } from '../contexts/DataContext';
 import { AuthContext } from "../contexts/AuthContext";
 import Navbar from "./Navbar";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-hot-toast";
 
 const ProductInfo = () => {
   const { id } = useParams();

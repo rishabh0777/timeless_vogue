@@ -3,8 +3,8 @@ import { DataContext } from "../contexts/DataContext";
 import { AddressContext } from "../contexts/AddressContext";
 import { PaymentContext } from "../contexts/PaymentContext";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-hot-toast";
+
 
 const Payment = () => {
   const { cart } = useContext(DataContext);
