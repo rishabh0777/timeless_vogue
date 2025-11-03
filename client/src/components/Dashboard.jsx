@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+import { DataContext } from '../contexts/DataContext';
 import Category from './Category';
 import TopItems from './TopItems';
 import SearchBar from './SearchBar';
-import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';
 import heroPoster from '../assets/Images/Poster/heroPoster.jpg';
+
 
 import HeroSkeleton from '../loaderComponents/HeroSkeleton';
 import CategorySkeleton from '../loaderComponents/CategorySkeleton';
@@ -13,11 +14,12 @@ import TopItemsSkeleton from '../loaderComponents/TopItemsSkeleton';
 const Dashboard = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const { products } = useContext(DataContext);
+
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 2000);
-    return () => clearTimeout(timer);
-  }, []);
+    !products.length ? setIsLoading(false) : setIsLoading(true);
+  }, [products]);
 
   return (
     <>

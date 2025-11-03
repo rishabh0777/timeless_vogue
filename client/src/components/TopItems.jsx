@@ -12,7 +12,7 @@ const TopItems = () => {
   const { products, setCart, setCartLength, setMyProductId } = useContext(DataContext);
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
   const navigate = useNavigate();
-  const scrollRef = useRef(null);
+  const scrollRef = useRef(null); 
 
   const [productId, setProductId] = useState(null);
   const user = JSON.parse(localStorage.getItem('user'));
